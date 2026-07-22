@@ -1,0 +1,214 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+/*
+ * Semua class Tailwind seperti:
+ * bg-bg, bg-surface, text-text-primary,
+ * text-muted, dan border-stroke
+ * mengambil warna dari variabel tema di bawah.
+ */
+@theme inline {
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-elevated: var(--theme-surface-elevated);
+
+  --color-text-primary: var(--theme-text-primary);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-muted: var(--theme-muted);
+
+  --color-stroke: var(--theme-stroke);
+  --color-accent: var(--theme-accent);
+
+  --animate-scroll-down: scroll-down 1.5s ease-in-out infinite;
+  --animate-role-fade-in: role-fade-in 0.4s ease-out;
+  --animate-gradient-shift: gradient-shift 6s ease infinite;
+}
+
+/* Animasi lama tetap dipertahankan */
+@keyframes scroll-down {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@keyframes role-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/*
+ * DEFAULT: DARK MODE
+ *
+ * Pengunjung baru otomatis mendapatkan dark mode.
+ */
+:root,
+html[data-theme="dark"] {
+  --theme-bg: #050505;
+  --theme-surface: #0b0b0c;
+  --theme-surface-elevated: #111113;
+
+  --theme-text-primary: #f7f7f7;
+  --theme-text-secondary: #c1b9be;
+  --theme-muted: #8e858b;
+
+  --theme-stroke: rgba(255, 255, 255, 0.12);
+  --theme-accent: #f7f7f7;
+
+  /*
+   * Variabel lama dipertahankan agar komponen
+   * yang masih memakai hsl(var(--bg)) tidak rusak.
+   */
+  --bg: 0 0% 4%;
+  --surface: 0 0% 8%;
+  --text: 0 0% 96%;
+  --muted: 0 0% 53%;
+  --stroke: 0 0% 12%;
+  --accent: 0 0% 96%;
+
+  --radius: 0.625rem;
+
+  color-scheme: dark;
+}
+
+/*
+ * LIGHT MODE
+ *
+ * Dibuat off-white, bukan putih polos,
+ * supaya tetap terasa premium dan tidak menyilaukan.
+ */
+html[data-theme="light"] {
+  --theme-bg: #f7f4f6;
+  --theme-surface: rgba(255, 255, 255, 0.86);
+  --theme-surface-elevated: #ffffff;
+
+  --theme-text-primary: #191518;
+  --theme-text-secondary: #51494e;
+  --theme-muted: #766c72;
+
+  --theme-stroke: rgba(44, 32, 39, 0.14);
+  --theme-accent: #191518;
+
+  /*
+   * Versi light untuk variabel lama.
+   */
+  --bg: 330 14% 96%;
+  --surface: 0 0% 100%;
+  --text: 330 8% 9%;
+  --muted: 330 5% 44%;
+  --stroke: 330 12% 82%;
+  --accent: 330 8% 9%;
+
+  color-scheme: light;
+}
+
+/* Gradient lama tetap dipertahankan */
+@utility accent-gradient {
+  background: linear-gradient(
+    90deg,
+    #89aacc 0%,
+    #4e85bf 100%
+  );
+}
+
+@utility accent-gradient-animated {
+  background: linear-gradient(
+    90deg,
+    #89aacc 0%,
+    #4e85bf 50%,
+    #89aacc 100%
+  );
+
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+@layer base {
+  * {
+    border-color: var(--theme-stroke);
+  }
+
+  html {
+    scroll-behavior: smooth;
+
+    /*
+     * Jangan dihapus.
+     * Ini mempertahankan scrollbar dan mencegah
+     * layout website bergeser ke kanan-kiri.
+     */
+    overflow-x: clip;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+
+    background-color: var(--theme-bg);
+  }
+
+  body,
+  #root {
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+
+    background-color: var(--theme-bg);
+    color: var(--theme-text-primary);
+
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/*
+ * Transisi warna hanya aktif ketika
+ * tombol tema ditekan.
+ */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 400ms ease,
+    border-color 400ms ease,
+    color 400ms ease,
+    fill 400ms ease,
+    stroke 400ms ease,
+    box-shadow 400ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition: none !important;
+  }
+}
