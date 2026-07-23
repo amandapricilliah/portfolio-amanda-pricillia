@@ -721,7 +721,7 @@ function ClientWebsitesCaseStudy() {
           </a>
 
           <span className="hidden text-[9px] uppercase tracking-[0.3em] text-muted sm:block">
-            31 Client Websites · Visual Archive
+            30+ Client Websites · Visual Archive
           </span>
 
           <ThemeToggle />
@@ -751,13 +751,13 @@ function ClientWebsitesCaseStudy() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-[10px] uppercase tracking-[0.42em] text-white/55 md:text-xs">
-              Multi-industry web design archive
+              Selected Mockup Website
             </p>
 
             <h1 className="mx-auto mt-6 max-w-6xl text-[clamp(4rem,11vw,10rem)] leading-[0.82] tracking-[-0.075em] text-white">
-              31 Client
+              30+
               <span className="block font-display italic text-fuchsia-300">
-                Websites.
+                Client Websites.
               </span>
             </h1>
 
@@ -765,6 +765,16 @@ function ClientWebsitesCaseStudy() {
               A visual-first collection of client websites across technology,
               healthcare, retail, education, architecture, services, and more.
             </p>
+            <a
+  href="https://www.figma.com/design/helsyniIODRmAs01LI83OV/Selected-Mockup-Client---Amanda-Pricillia-Hendriyan?node-id=0-1&t=eR7IafDQoFvJCH8o-1"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="group mt-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-pink-400/50 hover:bg-pink-500/15"
+>
+  Go to Figma
+
+  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+</a>
           </motion.div>
         </div>
 
