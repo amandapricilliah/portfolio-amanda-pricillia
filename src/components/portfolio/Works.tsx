@@ -40,12 +40,12 @@ const PROJECTS: Project[] = [
   // UI/UX DESIGNER
   {
   id: "client-website-mockups",
-  title: "30 Client Website Mockups",
+  title: "30+ Client Website Mockups",
   category: "UI/UX Designer",
   type: "Website Mockups + Style Guides",
   href: "/client-websites",
   description:
-    "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
+    "A collection of 30+ website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
   thumbnail: "/images/client-websites/client-mockups.png",
   tags: ["Web Design", "Style Guide", "Mockup", "Client Work"],
 },
