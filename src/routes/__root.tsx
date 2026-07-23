@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react";
 import {
   HeadContent,
   Link,
@@ -187,6 +188,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
       <body>
         {children}
+        <Analytics />
         <Scripts />
       </body>
     </html>
