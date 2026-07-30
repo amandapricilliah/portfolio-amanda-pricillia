@@ -11,26 +11,46 @@ const EXPERTISE = [
     number: "01",
     title: "UI/UX Design",
     description:
-      "Turning research, user needs, and business goals into clear user flows, wireframes, prototypes, and intuitive interfaces.",
+      "Researching user needs and translating insights into intuitive digital experiences.",
   },
   {
     number: "02",
     title: "Graphic Design",
     description:
-      "Creating visual identities, digital assets, and communication materials that present ideas clearly and consistently.",
+      "Creating visual identities and communication assets with clear visual hierarchy.",
   },
   {
     number: "03",
     title: "Web Development",
     description:
-      "Transforming designs into responsive and functional websites with attention to usability, consistency, and performance.",
+      "Building responsive, functional, and accessible web experiences.",
+  },
+  {
+    number: "04",
+    title: "Product Management",
+    description:
+      "Defining product direction, priorities, roadmap, and success criteria.",
+  },
+  {
+    number: "05",
+    title: "Business Analysis",
+    description:
+      "Transforming business needs into clear requirements and actionable documentation.",
+  },
+  {
+    number: "06",
+    title: "QA Testing",
+    description:
+      "Validating functionality through structured testing and release checks.",
   },
 ];
 
 const SKILLS = [
   "UI/UX Design",
   "Web Development",
-  "Graphics Designer",
+  "Graphic Design",
+  "Product Management",
+  "Business Analysis",
   "QA Testing",
 ];
 
@@ -389,82 +409,71 @@ export function About() {
             </div>
           </div>
 
-          {/* Expertise cards */}
-          <div
-            ref={cardsRef}
-            className="mt-12 grid grid-cols-1 gap-4 md:mt-16 md:grid-cols-3"
-          >
-            {EXPERTISE.map((item) => (
-              <article
-                key={item.number}
-                className={`group relative overflow-hidden rounded-[1.75rem] border border-stroke bg-surface p-6 transition-all duration-500 hover:-translate-y-1 hover:border-pink-400/40 md:p-7 ${
-                  isDark
-                    ? "shadow-[0_18px_50px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.08)] hover:shadow-[0_22px_60px_rgba(0,0,0,0.65),0_0_28px_rgba(236,72,153,0.14),inset_0_1px_0_rgba(255,255,255,0.12)]"
-                    : "shadow-[0_18px_50px_rgba(65,40,53,0.11),inset_0_1px_0_rgba(255,255,255,0.95)] hover:shadow-[0_22px_60px_rgba(65,40,53,0.17),0_0_28px_rgba(236,72,153,0.12),inset_0_1px_0_rgba(255,255,255,1)]"
-                }`}
-              >
-                {/* Glossy surface */}
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute inset-0 opacity-70 ${
-                    isDark
-                      ? "bg-gradient-to-br from-white/[0.09] via-transparent to-black/60"
-                      : "bg-gradient-to-br from-white/90 via-transparent to-pink-100/30"
-                  }`}
-                />
+        {/* Compact expertise cards */}
+<div
+  ref={cardsRef}
+  className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-14 xl:grid-cols-3"
+>
+  {EXPERTISE.map((item) => (
+    <article
+      key={item.number}
+      className={`group relative overflow-hidden rounded-[1.35rem] border px-5 py-5 transition-all duration-500 hover:-translate-y-1 ${
+        isDark
+          ? "border-white/[0.12] bg-[#050505] shadow-[0_16px_40px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-pink-400/35 hover:shadow-[0_22px_55px_rgba(0,0,0,0.8),0_0_28px_rgba(236,72,153,0.13),inset_0_1px_0_rgba(255,255,255,0.1)]"
+          : "border-black/[0.12] bg-white shadow-[0_16px_38px_rgba(0,0,0,0.1)] hover:border-pink-400/35 hover:shadow-[0_20px_48px_rgba(65,40,53,0.14),0_0_24px_rgba(236,72,153,0.1)]"
+      }`}
+    >
+      {/* Neutral surface */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 ${
+          isDark
+            ? "bg-gradient-to-br from-white/[0.075] via-transparent to-black/75"
+            : "bg-gradient-to-br from-white via-transparent to-black/[0.035]"
+        }`}
+      />
 
-                {/* Gloss reflection */}
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -left-[20%] -top-[65%] h-[130%] w-[75%] rotate-[22deg] bg-gradient-to-r from-transparent to-transparent blur-xl transition-transform duration-700 group-hover:translate-x-12 ${
-                    isDark
-                      ? "via-white/[0.07]"
-                      : "via-white/60"
-                  }`}
-                />
+      {/* Pink hover glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full bg-pink-500/0 blur-[55px] transition-all duration-500 group-hover:bg-pink-500/15"
+      />
 
-                {/* Pink upper glow */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-pink-500/0 blur-[55px] transition-all duration-500 group-hover:bg-pink-500/15"
-                />
+      {/* Gloss reflection */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute -left-[20%] -top-[80%] h-[150%] w-[70%] rotate-[22deg] bg-gradient-to-r from-transparent to-transparent blur-xl transition-transform duration-700 group-hover:translate-x-10 ${
+          isDark ? "via-white/[0.045]" : "via-white/70"
+        }`}
+      />
 
-                {/* Top highlight */}
-                <div
-                  aria-hidden="true"
-                  className={`absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${
-                    isDark
-                      ? "via-white/35"
-                      : "via-white"
-                  }`}
-                />
+      <div className="relative z-10 flex items-start gap-4">
+        <span
+          className={`shrink-0 font-display text-lg italic transition-colors duration-300 ${
+            isDark
+              ? "text-white/45 group-hover:text-pink-200"
+              : "text-black/45 group-hover:text-pink-700"
+          }`}
+        >
+          {item.number}
+        </span>
 
-                <div className="relative z-10">
-                  <div className="mb-10 flex items-center justify-between">
-                    <span
-                      className={`font-display text-xl italic ${
-                        isDark
-                          ? "text-pink-200"
-                          : "text-pink-700"
-                      }`}
-                    >
-                      {item.number}
-                    </span>
+        <div className="min-w-0">
+          <h3 className="text-base font-medium tracking-tight text-text-primary">
+            {item.title}
+          </h3>
 
-                    <span className="h-2 w-2 rounded-full bg-pink-400 opacity-45 shadow-[0_0_12px_rgba(244,114,182,0.9)] transition-all duration-300 group-hover:scale-125 group-hover:opacity-100" />
-                  </div>
+          <p className="mt-2 text-xs leading-5 text-muted transition-colors duration-300 group-hover:text-text-secondary">
+            {item.description}
+          </p>
+        </div>
+      </div>
 
-                  <h3 className="text-xl font-medium tracking-tight text-text-primary">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-6 text-muted transition-colors duration-300 group-hover:text-text-secondary">
-                    {item.description}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+      {/* Dot hanya pink saat hover */}
+      <span className="absolute right-4 top-4 h-1.5 w-1.5 rounded-full bg-white/20 transition-all duration-300 group-hover:scale-125 group-hover:bg-pink-400 group-hover:shadow-[0_0_12px_rgba(244,114,182,0.9)]" />
+    </article>
+  ))}
+</div>
         </div>
       </div>
     </section>

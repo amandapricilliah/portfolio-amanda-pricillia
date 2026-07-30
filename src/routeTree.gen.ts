@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserComplaintsRouteImport } from './routes/user-complaints'
+import { Route as LamarinRouteImport } from './routes/lamarin'
 import { Route as KiloinRouteImport } from './routes/kiloin'
 import { Route as InewsByteRouteImport } from './routes/inews-byte'
 import { Route as GraphicsDesignRouteImport } from './routes/graphics-design'
@@ -22,6 +23,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const UserComplaintsRoute = UserComplaintsRouteImport.update({
   id: '/user-complaints',
   path: '/user-complaints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LamarinRoute = LamarinRouteImport.update({
+  id: '/lamarin',
+  path: '/lamarin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KiloinRoute = KiloinRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/graphics-design': typeof GraphicsDesignRoute
   '/inews-byte': typeof InewsByteRoute
   '/kiloin': typeof KiloinRoute
+  '/lamarin': typeof LamarinRoute
   '/user-complaints': typeof UserComplaintsRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/graphics-design': typeof GraphicsDesignRoute
   '/inews-byte': typeof InewsByteRoute
   '/kiloin': typeof KiloinRoute
+  '/lamarin': typeof LamarinRoute
   '/user-complaints': typeof UserComplaintsRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/graphics-design': typeof GraphicsDesignRoute
   '/inews-byte': typeof InewsByteRoute
   '/kiloin': typeof KiloinRoute
+  '/lamarin': typeof LamarinRoute
   '/user-complaints': typeof UserComplaintsRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/graphics-design'
     | '/inews-byte'
     | '/kiloin'
+    | '/lamarin'
     | '/user-complaints'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/graphics-design'
     | '/inews-byte'
     | '/kiloin'
+    | '/lamarin'
     | '/user-complaints'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/graphics-design'
     | '/inews-byte'
     | '/kiloin'
+    | '/lamarin'
     | '/user-complaints'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   GraphicsDesignRoute: typeof GraphicsDesignRoute
   InewsByteRoute: typeof InewsByteRoute
   KiloinRoute: typeof KiloinRoute
+  LamarinRoute: typeof LamarinRoute
   UserComplaintsRoute: typeof UserComplaintsRoute
 }
 
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/user-complaints'
       fullPath: '/user-complaints'
       preLoaderRoute: typeof UserComplaintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lamarin': {
+      id: '/lamarin'
+      path: '/lamarin'
+      fullPath: '/lamarin'
+      preLoaderRoute: typeof LamarinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kiloin': {
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   GraphicsDesignRoute: GraphicsDesignRoute,
   InewsByteRoute: InewsByteRoute,
   KiloinRoute: KiloinRoute,
+  LamarinRoute: LamarinRoute,
   UserComplaintsRoute: UserComplaintsRoute,
 }
 export const routeTree = rootRouteImport

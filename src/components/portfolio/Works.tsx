@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
-  Code2,
   LayoutGrid,
   Sparkles,
 } from "lucide-react";
@@ -9,7 +8,7 @@ import { useMemo, useState } from "react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
 
-type ProjectCategory = "UI/UX Designer" | "Web Developer" | "Graphics Designer";
+type ProjectCategory = "Digital Product" | "Graphics Designer";
 
 type Project = {
   id: string;
@@ -27,12 +26,8 @@ const FILTERS: {
   icon: typeof LayoutGrid;
 }[] = [
   {
-    label: "UI/UX Designer",
+    label: "Digital Product",
     icon: LayoutGrid,
-  },
-  {
-    label: "Web Developer",
-    icon: Code2,
   },
 ];
 
@@ -40,19 +35,19 @@ const PROJECTS: Project[] = [
   // UI/UX DESIGNER
   {
   id: "client-website-mockups",
-  title: "30+ Client Website Mockups",
-  category: "UI/UX Designer",
+  title: "30 Client Website Mockups",
+  category: "Digital Product",
   type: "Website Mockups + Style Guides",
   href: "/client-websites",
   description:
-    "A collection of 30+ website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
+    "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
   thumbnail: "/images/client-websites/client-mockups.png",
   tags: ["Web Design", "Style Guide", "Mockup", "Client Work"],
 },
   {
     id: "farmagym",
     title: "FarmaGym",
-    category: "UI/UX Designer",
+    category: "Digital Product",
     type: "Mobile App · Full Design Thinking",
     description:
       "A fitness planning application developed through an end-to-end design thinking process, from user research and problem definition to prototyping and usability validation.",
@@ -63,7 +58,7 @@ const PROJECTS: Project[] = [
   {
     id: "agriplant",
     title: "Agriplant",
-    category: "UI/UX Designer",
+    category: "Digital Product",
     type: "Mobile App + Admin Website",
     href: "/agriplant",
     description:
@@ -74,7 +69,7 @@ const PROJECTS: Project[] = [
   {
   id: "user-complaints",
   title: "User Complaints",
-  category: "UI/UX Designer",
+  category: "Digital Product",
   type: "Web Platform · Full Design Thinking",
   href: "/user-complaints",
   description:
@@ -90,7 +85,7 @@ const PROJECTS: Project[] = [
   {
   id: "kiloin",
   title: "Kiloin",
-  category: "UI/UX Designer",
+  category: "Digital Product",
   type: "Mobile App · Product & Business Documentation",
   href: "/kiloin",
   description:
@@ -106,7 +101,7 @@ const PROJECTS: Project[] = [
   {
   id: "amr-farms",
   title: "AMR Farms",
-  category: "UI/UX Designer",
+  category: "Digital Product",
   type: "Mobile Grocery App + Admin Dashboard",
   href: "/amr-farms",
   description:
@@ -122,7 +117,7 @@ const PROJECTS: Project[] = [
   {
   id: "inews-byte",
   title: "iNews Byte",
-  category: "Web Developer",
+  category: "Digital Product",
   type: "News Portal · Short-Video Platform",
   href: "/inews-byte",
   description:
@@ -131,15 +126,16 @@ const PROJECTS: Project[] = [
   tags: ["CodeIgniter 4", "PHP", "MySQL", "Agile"],
 },
   {
-    id: "frontend-project",
-    title: "Front-End Website Project",
-    category: "Web Developer",
-    type: "Responsive Front-End Development",
-    description:
-      "A responsive website implementation developed from an approved interface design with attention to layout consistency, usability, and device compatibility.",
-    thumbnail: "/images/projects/frontend-project.webp",
-    tags: ["Front-End", "Responsive", "Web Interface", "Implementation"],
-  },
+  id: "lamarin",
+  title: "LAMARIN",
+  category: "Digital Product",
+  type: "Full-Stack SaaS · Product Strategy · UX · Engineering",
+  description:
+    "An end-to-end job application management workspace combining Kanban tracking, calendar planning, personal analytics, secure document management, and account-based data privacy.",
+  thumbnail: "/images/lamarin/lamarin.png",
+  tags: ["Next.js", "TypeScript", "Supabase", "Product Design"],
+  href: "/lamarin",
+},
   {
     id: "wanuarejo-branding",
     title: "Wanuarejo Village Identity",
@@ -255,7 +251,7 @@ const PROJECTS: Project[] = [
 
 export function Works() {
   const [activeFilter, setActiveFilter] =
-    useState<ProjectCategory>("UI/UX Designer");
+    useState<ProjectCategory>("Digital Product");
 
   const { isDark } = useTheme();
 
