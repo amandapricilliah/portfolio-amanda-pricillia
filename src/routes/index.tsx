@@ -52,9 +52,9 @@ function Index() {
           <About />
           <Education />
           <Experience />
-          <Certificates />
           <Works />
           <Explorations />
+          <Certificates />
           <Journal />
           <Stats />
           <Contact />

@@ -25,33 +25,13 @@ const EXPERTISE = [
     description:
       "Building responsive, functional, and accessible web experiences.",
   },
-  {
-    number: "04",
-    title: "Product Management",
-    description:
-      "Defining product direction, priorities, roadmap, and success criteria.",
-  },
-  {
-    number: "05",
-    title: "Business Analysis",
-    description:
-      "Transforming business needs into clear requirements and actionable documentation.",
-  },
-  {
-    number: "06",
-    title: "QA Testing",
-    description:
-      "Validating functionality through structured testing and release checks.",
-  },
+
 ];
 
 const SKILLS = [
   "UI/UX Design",
   "Web Development",
   "Graphic Design",
-  "Product Management",
-  "Business Analysis",
-  "QA Testing",
 ];
 
 export function About() {

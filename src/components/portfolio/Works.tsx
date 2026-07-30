@@ -32,28 +32,17 @@ const FILTERS: {
 ];
 
 const PROJECTS: Project[] = [
-  // UI/UX DESIGNER
+  // DIGITAL PRODUCT
   {
-  id: "client-website-mockups",
-  title: "30 Client Website Mockups",
-  category: "Digital Product",
-  type: "Website Mockups + Style Guides",
-  href: "/client-websites",
-  description:
-    "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
-  thumbnail: "/images/client-websites/client-mockups.png",
-  tags: ["Web Design", "Style Guide", "Mockup", "Client Work"],
-},
-  {
-    id: "farmagym",
-    title: "FarmaGym",
+    id: "inews-byte",
+    title: "iNews Byte",
     category: "Digital Product",
-    type: "Mobile App · Full Design Thinking",
+    type: "News Portal · Short-Video Platform",
+    href: "/inews-byte",
     description:
-      "A fitness planning application developed through an end-to-end design thinking process, from user research and problem definition to prototyping and usability validation.",
-    thumbnail: "/images/farmagym/farmagym_mockup.png",
-    tags: ["Design Thinking", "Mobile App", "Research", "Prototype"],
-    href: "/farmagym",
+      "A short-form video news channel developed for the iNews portal using Agile Development, with YouTube integration, content management, and interactive features.",
+    thumbnail: "/images/inews-byte/inews-byte-cover.png",
+    tags: ["CodeIgniter 4", "PHP", "MySQL", "Agile"],
   },
   {
     id: "agriplant",
@@ -67,187 +56,79 @@ const PROJECTS: Project[] = [
     tags: ["Smart Farming", "Mobile App", "Dashboard", "Design System"],
   },
   {
-  id: "user-complaints",
-  title: "User Complaints",
-  category: "Digital Product",
-  type: "Web Platform · Full Design Thinking",
-  href: "/user-complaints",
-  description:
-    "A complaint feature for the iNews digital platform, developed through user research, user flows, wireframes, interface exploration, and interactive prototyping.",
-  thumbnail: "/images/user-complaints/user-complaints-cover.png",
-  tags: [
-    "Web Design",
-    "User Research",
-    "User Flow",
-    "Prototype",
-  ],
-},
-  {
-  id: "kiloin",
-  title: "Kiloin",
-  category: "Digital Product",
-  type: "Mobile App · Product & Business Documentation",
-  href: "/kiloin",
-  description:
-    "A recycling service application that connects waste pickup through Ko-Put with recycled-product shopping through Ko-Mart, supported by wireframes, a class diagram, and a complete business plan.",
-  thumbnail: "/images/kiloin/Thumbnail.png",
-  tags: [
-    "Mobile App",
-    "Recycling",
-    "Class Diagram",
-    "Business Plan",
-  ],
-},
-  {
-  id: "amr-farms",
-  title: "AMR Farms",
-  category: "Digital Product",
-  type: "Mobile Grocery App + Admin Dashboard",
-  href: "/amr-farms",
-  description:
-    "A grocery-commerce concept featuring mobile shopping wireframes and an administrative dashboard for product categories, income data, and business reporting.",
-  thumbnail: "/images/amr-farms/amr-farms-hero.png",
-  tags: [
-    "Mobile App",
-    "Admin Dashboard",
-    "Grocery Commerce",
-    "Wireframe",
-  ],
-},
-  {
-  id: "inews-byte",
-  title: "iNews Byte",
-  category: "Digital Product",
-  type: "News Portal · Short-Video Platform",
-  href: "/inews-byte",
-  description:
-    "A short-form video news channel developed for the iNews portal using Agile Development, with YouTube integration, content management, and interactive features.",
-  thumbnail: "/images/inews-byte/inews-byte-cover.png",
-  tags: ["CodeIgniter 4", "PHP", "MySQL", "Agile"],
-},
-  {
-  id: "lamarin",
-  title: "LAMARIN",
-  category: "Digital Product",
-  type: "Full-Stack SaaS · Product Strategy · UX · Engineering",
-  description:
-    "An end-to-end job application management workspace combining Kanban tracking, calendar planning, personal analytics, secure document management, and account-based data privacy.",
-  thumbnail: "/images/lamarin/lamarin.png",
-  tags: ["Next.js", "TypeScript", "Supabase", "Product Design"],
-  href: "/lamarin",
-},
-  {
-    id: "wanuarejo-branding",
-    title: "Wanuarejo Village Identity",
-    category: "Graphics Designer",
-    type: "Logo Design + Brand Identity",
+    id: "user-complaints",
+    title: "User Complaints",
+    category: "Digital Product",
+    type: "Web Platform · Full Design Thinking",
+    href: "/user-complaints",
     description:
-      "A complete village identity project covering logo philosophy, typography, colors, symbols, visual meaning, and realistic applications across merchandise and environmental mockups.",
-    thumbnail: "/images/projects/wanuarejo.webp",
-    tags: ["Logo Design", "Brand Identity", "Typography", "Mockup"],
+      "A complaint feature for the iNews digital platform, developed through user research, user flows, wireframes, interface exploration, and interactive prototyping.",
+    thumbnail: "/images/user-complaints/user-complaints-cover.png",
+    tags: ["Web Design", "User Research", "User Flow", "Prototype"],
   },
   {
-    id: "share-story-template",
-    title: "News Share Story Templates",
-    category: "Graphics Designer",
-    type: "Okezone + SINDOnews",
+    id: "farmagym",
+    title: "FarmaGym",
+    category: "Digital Product",
+    type: "Mobile App · Full Design Thinking",
+    href: "/farmagym",
     description:
-      "Instagram Story templates that allow users to share Okezone and SINDOnews articles through visually branded and mobile-friendly layouts.",
-    thumbnail: "/images/projects/share-story.webp",
-    tags: ["Social Media", "News Media", "Template", "Mobile Mockup"],
+      "A fitness planning application developed through an end-to-end design thinking process, from user research and problem definition to prototyping and usability validation.",
+    thumbnail: "/images/farmagym/farmagym_mockup.png",
+    tags: ["Design Thinking", "Mobile App", "Research", "Prototype"],
   },
   {
-    id: "sindonews-banner",
-    title: "SINDOnews Quiz Banner",
-    category: "Graphics Designer",
-    type: "Website Banner",
+    id: "lamarin",
+    title: "LAMARIN",
+    category: "Digital Product",
+    type: "Full-Stack SaaS · Product Strategy · UX · Engineering",
+    href: "/lamarin",
     description:
-      "A promotional header banner designed for the daily quiz feature on the SINDOnews website.",
-    thumbnail: "/images/projects/sindonews-banner.webp",
-    tags: ["Web Banner", "Campaign", "News Media", "Visual Design"],
+      "An end-to-end job application management workspace combining Kanban tracking, calendar planning, personal analytics, secure document management, and account-based data privacy.",
+    thumbnail: "/images/lamarin/lamarin.png",
+    tags: ["Next.js", "TypeScript", "Supabase", "Product Design"],
   },
   {
-    id: "okezone-banner",
-    title: "Okezone Quiz Banner",
-    category: "Graphics Designer",
-    type: "Website Banner",
+    id: "client-website-mockups",
+    title: "30+ Client Websites",
+    category: "Digital Product",
+    type: "Website Mockups + Style Guides",
+    href: "/client-websites",
     description:
-      "A branded website banner created for the daily quiz experience on the Okezone digital news platform.",
-    thumbnail: "/images/projects/okezone-banner.webp",
-    tags: ["Web Banner", "Campaign", "Okezone", "Digital Media"],
+      "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
+    thumbnail: "/images/client-websites/client-mockups.png",
+    tags: ["Web Design", "Style Guide", "Mockup", "Client Work"],
   },
   {
-    id: "resolusiweb-pricelist",
-    title: "Resolusiweb Price List",
-    category: "Graphics Designer",
-    type: "Instagram Feed Design",
+    id: "kiloin",
+    title: "Kiloin",
+    category: "Digital Product",
+    type: "Mobile App · Product & Business Documentation",
+    href: "/kiloin",
     description:
-      "A social media price-list design created to present Resolusiweb services in a clear, structured, and visually engaging format.",
-    thumbnail: "/images/projects/resolusiweb-pricelist.webp",
-    tags: ["Social Media", "Price List", "Instagram", "Branding"],
+      "A recycling service application that connects waste pickup through Ko-Put with recycled-product shopping through Ko-Mart, supported by wireframes, a class diagram, and a complete business plan.",
+    thumbnail: "/images/kiloin/Thumbnail.png",
+    tags: ["Mobile App", "Recycling", "Class Diagram", "Business Plan"],
   },
   {
-    id: "ngadiharjo-ebook",
-    title: "Ngadiharjo Village E-book",
-    category: "Graphics Designer",
-    type: "Editorial Design · 50+ Pages",
+    id: "amr-farms",
+    title: "AMR Farms",
+    category: "Digital Product",
+    type: "Mobile Grocery App + Admin Dashboard",
+    href: "/amr-farms",
     description:
-      "A village profile e-book containing more than 50 pages, designed to introduce Ngadiharjo through structured information, visual storytelling, and book mockups.",
-    thumbnail: "/images/projects/ngadiharjo-ebook.webp",
-    tags: ["Editorial", "E-book", "Layout Design", "Book Mockup"],
+      "A grocery-commerce concept featuring mobile shopping wireframes and an administrative dashboard for product categories, income data, and business reporting.",
+    thumbnail: "/images/amr-farms/amr-farms-hero.png",
+    tags: [
+      "Mobile App",
+      "Admin Dashboard",
+      "Grocery Commerce",
+      "Wireframe",
+    ],
   },
-  {
-    id: "greeting-campaign",
-    title: "Resolusiweb Greeting Campaign",
-    category: "Graphics Designer",
-    type: "Social Media Campaign",
-    description:
-      "A collection of branded greeting designs for national holidays and important celebrations, created for Resolusiweb’s Instagram content.",
-    thumbnail: "/images/projects/greeting-campaign.webp",
-    tags: ["Campaign", "Instagram", "Greeting Design", "Branding"],
-  },
-  {
-    id: "resolusiweb-calendar",
-    title: "Resolusiweb Calendar",
-    category: "Graphics Designer",
-    type: "Internal Design · 6 Concepts",
-    description:
-      "Six calendar design variations developed for internal company needs while maintaining consistent branding and practical readability.",
-    thumbnail: "/images/projects/resolusiweb-calendar.webp",
-    tags: ["Calendar", "Print Design", "Internal Branding", "Layout"],
-  },
-  {
-    id: "boba-posters",
-    title: "Boba Poster Collection",
-    category: "Graphics Designer",
-    type: "Poster Design · 10 Designs",
-    description:
-      "A collection of ten experimental promotional posters exploring typography, composition, colors, and product-oriented visual communication.",
-    thumbnail: "/images/projects/boba-posters.webp",
-    tags: ["Poster", "Food & Beverage", "Typography", "Campaign"],
-  },
-  {
-    id: "ipb-internship-guide",
-    title: "IPB Internship Guidebook",
-    category: "Graphics Designer",
-    type: "Editorial Cover · 7 Designs",
-    description:
-      "Seven cover design alternatives developed for an IPB internship guidebook, balancing academic credibility with a modern visual identity.",
-    thumbnail: "/images/projects/ipb-guidebook.webp",
-    tags: ["Book Cover", "Editorial", "Campus", "Print Design"],
-  },
-  {
-    id: "shoe-feed-design",
-    title: "Shoe Feed Collection",
-    category: "Graphics Designer",
-    type: "Social Media Design · 3 Designs",
-    description:
-      "Three experimental Instagram feed designs created to explore product presentation, promotional hierarchy, and visual branding.",
-    thumbnail: "/images/projects/shoe-feeds.webp",
-    tags: ["Instagram", "Product Design", "Social Media", "Promotion"],
-  }
+  ];
 
-];
+  // project Graphics Designer tetap lanjut di bawah sini
 
 export function Works() {
   const [activeFilter, setActiveFilter] =

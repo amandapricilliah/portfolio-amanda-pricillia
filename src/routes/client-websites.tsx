@@ -586,171 +586,115 @@ function ClientWebsitesCaseStudy() {
   }, [lightbox]);
 
   const lightboxPortal =
-  typeof document !== "undefined"
-    ? createPortal(
-        <AnimatePresence>
-          {lightbox && (
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-label={`${lightbox.client.name} website preview`}
-              className="
-                fixed inset-0 z-[10000]
-                overflow-y-auto overscroll-contain
-                bg-black/90 backdrop-blur-md
-              "
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onMouseDown={(event) => {
-                if (event.target === event.currentTarget) {
-                  setLightbox(null);
-                }
-              }}
-            >
-              {/* Tombol close */}
-              <button
-                type="button"
-                onClick={() => setLightbox(null)}
-                aria-label="Close image preview"
-                className="
-                  fixed right-4 top-4 z-[10030]
-                  flex h-11 w-11 items-center justify-center
-                  rounded-full border border-white/15
-                  bg-black/70 text-white/75
-                  backdrop-blur-xl transition
-                  hover:rotate-90
-                  hover:border-fuchsia-300/50
-                  hover:bg-fuchsia-500/20
-                  hover:text-white
-                  md:right-6 md:top-6
-                "
+    typeof document !== "undefined"
+      ? createPortal(
+          <AnimatePresence>
+            {lightbox && (
+              <motion.div
+                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/92 p-3 backdrop-blur-xl md:p-7"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget) setLightbox(null);
+                }}
               >
-                <X className="h-5 w-5" />
-              </button>
+                <motion.div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={`${lightbox.client.name} website preview`}
+                  initial={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 28, scale: 0.97 }
+                  }
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 20, scale: 0.98 }
+                  }
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  onMouseDown={(event) => event.stopPropagation()}
+                  className="relative flex max-h-[94vh] w-full max-w-[1500px] flex-col overflow-hidden rounded-[1.8rem] border border-white/15 bg-[#070707] shadow-[0_35px_140px_rgba(0,0,0,0.92)]"
+                >
+                  <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 md:px-7">
+                    <div className="min-w-0">
+                      <p className="text-[9px] uppercase tracking-[0.3em] text-white/35">
+                        Client Website Archive
+                      </p>
+                      <p className="mt-1 truncate text-sm text-white/80 md:text-base">
+                        {lightbox.client.name} · {lightbox.client.images[lightbox.index].label}
+                      </p>
+                    </div>
 
-              {/* Nama project */}
-              <div
-                className="
-                  pointer-events-none fixed left-4 top-4 z-[10020]
-                  max-w-[calc(100vw-7rem)]
-                  rounded-xl border border-white/10
-                  bg-black/60 px-4 py-3
-                  text-white backdrop-blur-xl
-                  md:left-6 md:top-6
-                "
-              >
-                <p className="text-[8px] uppercase tracking-[0.28em] text-white/45">
-                  Client Website Archive
-                </p>
+                    <button
+                      type="button"
+                      onClick={() => setLightbox(null)}
+                      aria-label="Close image preview"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-white/65 transition hover:rotate-90 hover:border-fuchsia-300/45 hover:text-white"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
 
-                <p className="mt-1 truncate text-xs text-white/85 md:text-sm">
-                  {lightbox.client.name} ·{" "}
-                  {lightbox.client.images[lightbox.index].label}
-                </p>
-              </div>
+                  <div className="relative min-h-0 flex-1 overflow-auto bg-black/60 p-3 md:p-6">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={lightbox.client.images[lightbox.index].src}
+                        initial={{ opacity: 0, x: 18 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -18 }}
+                        transition={{ duration: 0.28 }}
+                        className="mx-auto flex min-h-full w-full items-start justify-center"
+                      >
+                        <ImageWithFallback
+                          image={lightbox.client.images[lightbox.index]}
+                          className="h-auto max-h-none w-full max-w-[1240px] object-contain"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
 
-              {/* Area popup di tengah */}
-              <div
-                className="
-                  mx-auto min-h-screen
-                  w-full max-w-[1160px]
-                  px-4 pb-16 pt-24
-                  md:px-8 md:pb-20 md:pt-28
-                "
-                onMouseDown={(event) => event.stopPropagation()}
-              >
-                <AnimatePresence mode="wait">
-                 <motion.div
-  key={lightbox.client.images[lightbox.index].src}
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  exit={{ opacity: 0 }}
-  transition={{ duration: 0.25 }}
-  className="mx-auto w-fit max-w-[calc(100vw-3rem)]"
->
-  <ImageWithFallback
-    image={lightbox.client.images[lightbox.index]}
-    className="
-      block
-      h-auto
-      w-auto
-      max-w-full
-      object-contain
-      object-top
-      shadow-[0_35px_120px_rgba(0,0,0,0.75)]
-    "
-  />
-</motion.div>
-                </AnimatePresence>
-              </div>
+                    {lightbox.client.images.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => moveLightbox("prev")}
+                          aria-label="Previous website screen"
+                          className="fixed left-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:left-8"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
 
-              {/* Navigasi */}
-              {lightbox.client.images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => moveLightbox("prev")}
-                    aria-label="Previous website screen"
-                    className="
-                      fixed left-3 top-1/2 z-[10030]
-                      flex h-11 w-11 -translate-y-1/2
-                      items-center justify-center
-                      rounded-full border border-white/15
-                      bg-black/70 text-white/75
-                      backdrop-blur-xl transition
-                      hover:border-fuchsia-300/50
-                      hover:bg-fuchsia-500/20
-                      hover:text-white
-                      md:left-6
-                    "
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
+                        <button
+                          type="button"
+                          onClick={() => moveLightbox("next")}
+                          aria-label="Next website screen"
+                          className="fixed right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:right-8"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
 
-                  <button
-                    type="button"
-                    onClick={() => moveLightbox("next")}
-                    aria-label="Next website screen"
-                    className="
-                      fixed right-3 top-1/2 z-[10030]
-                      flex h-11 w-11 -translate-y-1/2
-                      items-center justify-center
-                      rounded-full border border-white/15
-                      bg-black/70 text-white/75
-                      backdrop-blur-xl transition
-                      hover:border-fuchsia-300/50
-                      hover:bg-fuchsia-500/20
-                      hover:text-white
-                      md:right-6
-                    "
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </>
-              )}
-
-              {/* Nomor halaman */}
-              <div
-                className="
-                  pointer-events-none fixed bottom-4 right-4 z-[10020]
-                  rounded-full border border-white/10
-                  bg-black/65 px-4 py-2
-                  text-xs text-white/70
-                  backdrop-blur-xl
-                  md:bottom-6 md:right-6
-                "
-              >
-                {String(lightbox.index + 1).padStart(2, "0")}
-                <span className="mx-1.5 text-white/25">/</span>
-                {String(lightbox.client.images.length).padStart(2, "0")}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body,
-      )
-    : null;
+                  <div className="flex items-center justify-between border-t border-white/10 px-5 py-4 md:px-7">
+                    <span className="text-xs text-white/35">
+                      Scroll to inspect the complete page
+                    </span>
+                    <span className="font-display text-lg italic text-white/70">
+                      {String(lightbox.index + 1).padStart(2, "0")}
+                      <span className="mx-1.5 text-white/20">/</span>
+                      {String(lightbox.client.images.length).padStart(2, "0")}
+                    </span>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )
+      : null;
 
   return (
     <div ref={pageRef} className="relative overflow-clip bg-bg text-text-primary">
@@ -777,7 +721,7 @@ function ClientWebsitesCaseStudy() {
           </a>
 
           <span className="hidden text-[9px] uppercase tracking-[0.3em] text-muted sm:block">
-            30+ Client Websites · Visual Archive
+            31 Client Websites · Visual Archive
           </span>
 
           <ThemeToggle />
@@ -807,13 +751,13 @@ function ClientWebsitesCaseStudy() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-[10px] uppercase tracking-[0.42em] text-white/55 md:text-xs">
-              Selected Mockup Website
+              Multi-industry web design archive
             </p>
 
             <h1 className="mx-auto mt-6 max-w-6xl text-[clamp(4rem,11vw,10rem)] leading-[0.82] tracking-[-0.075em] text-white">
-              30+
+              31 Client
               <span className="block font-display italic text-fuchsia-300">
-                Client Websites.
+                Websites.
               </span>
             </h1>
 
@@ -821,16 +765,6 @@ function ClientWebsitesCaseStudy() {
               A visual-first collection of client websites across technology,
               healthcare, retail, education, architecture, services, and more.
             </p>
-            <a
-  href="https://www.figma.com/design/helsyniIODRmAs01LI83OV/Selected-Mockup-Client---Amanda-Pricillia-Hendriyan?node-id=0-1&t=eR7IafDQoFvJCH8o-1"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="group mt-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-pink-400/50 hover:bg-pink-500/15"
->
-  Go to Figma
-
-  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-</a>
           </motion.div>
         </div>
 

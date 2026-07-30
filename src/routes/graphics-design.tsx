@@ -85,22 +85,22 @@ const OKEZONE_BANNERS: GalleryImage[] = Array.from(
 
 const HOLIDAY_BANNERS: GalleryImage[] = [
   {
-    src: "/images/graphics-design/holiday-banner/banner_ucapan_hari_raya_idul_fitri_onestrikemall.webp",
+    src: "/images/graphics-design/holiday-banner/onestrike-idul-fitri.webp",
     alt: "One Strike Mall Idul Fitri greeting banner",
     label: "One Strike Mall · Idul Fitri",
   },
   {
-  src: "/images/graphics-design/holiday-banner/_banner_ucapan_hari_raya_nyepi_onestrikemall.webp",
-  alt: "One Strike Mall Nyepi greeting banner",
-  label: "One Strike Mall · Nyepi",
-},
+    src: "/images/graphics-design/holiday-banner/onestrike-nyepi.webp",
+    alt: "One Strike Mall Nyepi greeting banner",
+    label: "One Strike Mall · Nyepi",
+  },
   {
-    src: "/images/graphics-design/holiday-banner/banner_ucapan_hari_raya_nyepi_babaairsoft.webp",
+    src: "/images/graphics-design/holiday-banner/baba-nyepi.webp",
     alt: "Baba Airsoft Nyepi greeting banner",
     label: "Baba Airsoft · Nyepi",
   },
   {
-    src: "/images/graphics-design/holiday-banner/banner_ucapan_hari_raya_idul_fitri_babaairsoft.webp",
+    src: "/images/graphics-design/holiday-banner/baba-idul-fitri.webp",
     alt: "Baba Airsoft Idul Fitri greeting banner",
     label: "Baba Airsoft · Idul Fitri",
   },
@@ -366,33 +366,30 @@ function HeroSection({
         </motion.div>
 
         <motion.div
-  style={prefersReducedMotion ? undefined : { x: cardX, y: cardY }}
-  className="relative hidden min-h-[540px] xl:block"
->
-  <FloatingCard
-    image="/images/graphics-design/greeting/feed-01.png"
-    className="left-[5%] top-[14%] w-[42%] -rotate-6"
-    delay={0}
-  />
-
-  <FloatingCard
-    image="/images/graphics-design/pricelist/feed-01.png"
-    className="right-[5%] top-[3%] w-[27%] rotate-6"
-    delay={0.12}
-  />
-
-  <FloatingCard
-    image="/images/graphics-design/ngadiharjo/page-01.png"
-    className="bottom-[3%] left-[20%] w-[49%] rotate-2"
-    delay={0.24}
-  />
-
-  <FloatingCard
-    image="/images/graphics-design/boba/poster-01.png"
-    className="bottom-[9%] right-[2%] w-[27%] -rotate-4"
-    delay={0.36}
-  />
-</motion.div>
+          style={prefersReducedMotion ? undefined : { x: cardX, y: cardY }}
+          className="relative hidden min-h-[540px] xl:block"
+        >
+          <FloatingCard
+            image="/images/graphics-design/wanurejo/mockup.png"
+            className="left-[8%] top-[16%] w-[44%] -rotate-6"
+            delay={0}
+          />
+          <FloatingCard
+            image="/images/graphics-design/share-story/template-01.png"
+            className="right-[7%] top-[4%] w-[26%] rotate-6"
+            delay={0.12}
+          />
+          <FloatingCard
+            image="/images/graphics-design/ngadiharjo/book-mockup.png"
+            className="bottom-[4%] left-[21%] w-[48%] rotate-3"
+            delay={0.24}
+          />
+          <FloatingCard
+            image="/images/graphics-design/boba/poster-01.png"
+            className="bottom-[10%] right-[3%] w-[26%] -rotate-4"
+            delay={0.36}
+          />
+        </motion.div>
       </div>
     </section>
   );
