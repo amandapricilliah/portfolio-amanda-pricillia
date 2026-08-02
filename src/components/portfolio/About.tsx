@@ -5,38 +5,45 @@ import {
 import { useEffect, useRef } from "react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
 
 const EXPERTISE = [
   {
     number: "01",
-    title: "UI/UX Design",
-    description:
-      "Researching user needs and translating insights into intuitive digital experiences.",
+    title: { en: "UI/UX Design", id: "Desain UI/UX" },
+    description: {
+      en: "Researching user needs and translating insights into intuitive digital experiences.",
+      id: "Meneliti kebutuhan pengguna dan menerjemahkan insight menjadi pengalaman digital yang intuitif.",
+    },
   },
   {
     number: "02",
-    title: "Graphic Design",
-    description:
-      "Creating visual identities and communication assets with clear visual hierarchy.",
+    title: { en: "Graphic Design", id: "Desain Grafis" },
+    description: {
+      en: "Creating visual identities and communication assets with clear visual hierarchy.",
+      id: "Menciptakan identitas visual dan materi komunikasi dengan hierarki yang jelas.",
+    },
   },
   {
     number: "03",
-    title: "Web Development",
-    description:
-      "Building responsive, functional, and accessible web experiences.",
+    title: { en: "Web Development", id: "Pengembangan Web" },
+    description: {
+      en: "Building responsive, functional, and accessible web experiences.",
+      id: "Membangun pengalaman web yang responsif, fungsional, dan mudah diakses.",
+    },
   },
-
 ];
 
 const SKILLS = [
-  "UI/UX Design",
-  "Web Development",
-  "Graphic Design",
-];
+  { en: "UI/UX Design", id: "Desain UI/UX" },
+  { en: "Web Development", id: "Pengembangan Web" },
+  { en: "Graphic Design", id: "Desain Grafis" },
+] as const;
 
 export function About() {
   const reduceMotion = useReducedMotion();
   const { isDark } = useTheme();
+  const { copy } = useLanguage();
 
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef =
@@ -167,7 +174,7 @@ export function About() {
       <div
         ref={glowRef}
         aria-hidden="true"
-        className="pointer-events-none absolute right-[-12rem] top-[18%] h-[32rem] w-[32rem] rounded-full bg-fuchsia-500/15 blur-[130px]"
+        className="homepage-ambient pointer-events-none absolute right-[-12rem] top-[18%] h-[32rem] w-[32rem] rounded-full bg-fuchsia-500/15 blur-[130px]"
       />
 
       <div className="relative z-10 mx-auto flex max-w-[1200px] items-center px-6 md:px-10 lg:px-16">
@@ -177,7 +184,7 @@ export function About() {
             <span className="h-px w-8 bg-stroke" />
 
             <span className="whitespace-nowrap text-xs uppercase tracking-[0.3em] text-muted">
-              About Me
+              {copy({ en: "About Me", id: "Tentang Saya" })}
             </span>
 
             <div className="h-px flex-1 overflow-hidden bg-stroke">
@@ -196,7 +203,7 @@ export function About() {
                 ref={headlineRef}
                 className="text-5xl leading-[0.95] tracking-[-0.04em] text-text-primary sm:text-6xl md:text-7xl lg:text-[5.2rem]"
               >
-                Designing with{" "}
+                {copy({ en: "Designing with", id: "Merancang dengan" })}{" "}
                 <span
                   className={`font-display italic ${
                     isDark
@@ -204,10 +211,10 @@ export function About() {
                       : "text-pink-600"
                   }`}
                 >
-                  empathy,
+                  {copy({ en: "empathy,", id: "empati," })}
                 </span>
                 <br />
-                building with{" "}
+                {copy({ en: "building with", id: "membangun dengan" })}{" "}
                 <span
                   className={`font-display italic ${
                     isDark
@@ -215,7 +222,7 @@ export function About() {
                       : "text-pink-600"
                   }`}
                 >
-                  purpose.
+                  {copy({ en: "purpose.", id: "tujuan." })}
                 </span>
               </h2>
             </div>
@@ -324,13 +331,18 @@ export function About() {
                                 : "text-pink-700/75"
                             }`}
                           >
-                            UI/UX Designer · Web
-                            Developer
+                            {copy({
+                              en: "UI/UX Designer · Web Developer",
+                              id: "UI/UX Designer · Web Developer",
+                            })}
                           </p>
 
                           <div className="mt-5 flex items-center justify-between border-t border-stroke pt-4">
                             <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
-                              Designer × Developer
+                              {copy({
+                                en: "Designer × Developer",
+                                id: "Desainer × Developer",
+                              })}
                             </span>
 
                             <span className="h-2 w-2 rounded-full bg-pink-400 shadow-[0_0_12px_rgba(244,114,182,1)]" />
@@ -351,37 +363,35 @@ export function About() {
                       : "text-pink-700"
                   }`}
                 >
-                  A little about me
+                  {copy({ en: "A little about me", id: "Sekilas tentang saya" })}
                 </span>
 
                 <p className="mt-6 text-xl leading-relaxed text-text-primary md:text-2xl">
-                  I’m Amanda, a Software Engineering
-                  Technology graduate working across UI/UX,
-                  web development, and visual
-                  communication.
+                  {copy({
+                    en: "I’m Amanda, a Software Engineering Technology graduate working across UI/UX, web development, and visual communication.",
+                    id: "Saya Amanda, lulusan Teknologi Rekayasa Perangkat Lunak yang berkarya di bidang UI/UX, pengembangan web, dan komunikasi visual.",
+                  })}
                 </p>
 
                 <p className="mt-5 text-sm leading-7 text-text-secondary md:text-base">
-                  I translate user needs and business
-                  requirements into clear user flows,
-                  responsive interfaces, and functional
-                  digital products from research and
-                  prototyping to front-end implementation
-                  and website development.
+                  {copy({
+                    en: "I translate user needs and business requirements into clear user flows, responsive interfaces, and functional digital products—from research and prototyping to front-end implementation and website development.",
+                    id: "Saya menerjemahkan kebutuhan pengguna dan bisnis menjadi alur yang jelas, antarmuka responsif, dan produk digital fungsional—mulai dari riset dan prototipe hingga implementasi front-end dan pengembangan website.",
+                  })}
                 </p>
 
                 {/* Skill chips */}
                 <div className="mt-7 flex flex-wrap gap-2">
                   {SKILLS.map((skill) => (
                     <span
-                      key={skill}
+                      key={skill.en}
                       className={`rounded-full border border-stroke bg-surface-elevated px-3.5 py-2 text-xs text-muted transition-all duration-300 hover:border-pink-400/40 ${
                         isDark
                           ? "shadow-[0_8px_20px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] hover:text-pink-100 hover:shadow-[0_10px_24px_rgba(0,0,0,0.55),0_0_18px_rgba(236,72,153,0.12),inset_0_1px_0_rgba(255,255,255,0.12)]"
                           : "shadow-[0_8px_20px_rgba(65,40,53,0.09),inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-pink-50 hover:text-pink-700 hover:shadow-[0_10px_24px_rgba(65,40,53,0.13),0_0_18px_rgba(236,72,153,0.1)]"
                       }`}
                     >
-                      {skill}
+                      {copy(skill)}
                     </span>
                   ))}
                 </div>
@@ -440,11 +450,11 @@ export function About() {
 
         <div className="min-w-0">
           <h3 className="text-base font-medium tracking-tight text-text-primary">
-            {item.title}
+            {copy(item.title)}
           </h3>
 
           <p className="mt-2 text-xs leading-5 text-muted transition-colors duration-300 group-hover:text-text-secondary">
-            {item.description}
+            {copy(item.description)}
           </p>
         </div>
       </div>

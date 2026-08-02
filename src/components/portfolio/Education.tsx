@@ -7,23 +7,25 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
+import type { Bilingual } from "./LanguageProvider";
 
-const COURSES = [
-  "Web Design",
-  "Mobile Programming",
-  "Database",
-  "Data Analysis and Visualization",
-  "Information System Analysis",
-  "Interactive Multimedia",
-  "Image Processing",
-  "Object-Oriented Programming",
+const COURSES: Bilingual[] = [
+  { en: "Web Design", id: "Desain Web" },
+  { en: "Mobile Programming", id: "Pemrograman Mobile" },
+  { en: "Database", id: "Basis Data" },
+  { en: "Data Analysis and Visualization", id: "Analisis dan Visualisasi Data" },
+  { en: "Information System Analysis", id: "Analisis Sistem Informasi" },
+  { en: "Interactive Multimedia", id: "Multimedia Interaktif" },
+  { en: "Image Processing", id: "Pengolahan Citra" },
+  { en: "Object-Oriented Programming", id: "Pemrograman Berorientasi Objek" },
 ];
 
 type AcademicProject = {
   title: string;
-  role: string;
+  role: Bilingual;
   period: string;
-  description: string;
+  description: Bilingual;
   shortName: string;
   logo: string;
 };
@@ -31,37 +33,45 @@ type AcademicProject = {
 const ACADEMIC_PROJECTS: AcademicProject[] = [
   {
     title: "UNESCO",
-    role: "Creative Designer",
+    role: { en: "Creative Designer", id: "Desainer Kreatif" },
     period: "Jan 2022 — Jun 2022",
-    description:
-      "Created the visual identity and branding assets for Wanuarejo Village to support tourism and local cultural promotion.",
+    description: {
+      en: "Created the visual identity and branding assets for Wanuarejo Village to support tourism and local cultural promotion.",
+      id: "Membuat identitas visual dan materi branding Desa Wanuarejo untuk mendukung promosi pariwisata dan budaya lokal.",
+    },
     shortName: "UNESCO",
     logo: "/images/unesco.png",
   },
   {
     title: "LB LIA English Course",
-    role: "Motion Graphic & Visual Designer",
+    role: { en: "Motion Graphic & Visual Designer", id: "Motion Graphic & Desainer Visual" },
     period: "Jan 2023 — Jul 2023",
-    description:
-      "Produced promotional videos, storyboards, and motion graphics for engaging digital education content.",
+    description: {
+      en: "Produced promotional videos, storyboards, and motion graphics for engaging digital education content.",
+      id: "Memproduksi video promosi, storyboard, dan motion graphic untuk konten pendidikan digital yang menarik.",
+    },
     shortName: "LIA",
     logo: "/images/lia.png",
   },
   {
     title: "Medical Team IPB",
-    role: "Visual Designer",
+    role: { en: "Visual Designer", id: "Desainer Visual" },
     period: "Aug 2021 — May 2022",
-    description:
-      "Designed social media content, event banners, and visual assets to maintain consistent organizational branding.",
+    description: {
+      en: "Designed social media content, event banners, and visual assets to maintain consistent organizational branding.",
+      id: "Merancang konten media sosial, banner acara, dan aset visual untuk menjaga konsistensi identitas organisasi.",
+    },
     shortName: "MT IPB",
     logo: "/images/medical-team-ipb.png",
   },
   {
     title: "Alterra Academy",
-    role: "Professional UI/UX Designer",
+    role: { en: "Professional UI/UX Designer", id: "UI/UX Designer Profesional" },
     period: "Aug 2023 — Dec 2023",
-    description:
-      "Learned end-to-end UI/UX design through research, wireframing, prototyping, usability testing, and capstone projects.",
+    description: {
+      en: "Learned end-to-end UI/UX design through research, wireframing, prototyping, usability testing, and capstone projects.",
+      id: "Mempelajari proses UI/UX secara menyeluruh melalui riset, wireframing, prototyping, usability testing, dan proyek capstone.",
+    },
     shortName: "ALTERRA",
     logo: "/images/alterra.png",
   },
@@ -69,6 +79,7 @@ const ACADEMIC_PROJECTS: AcademicProject[] = [
 
 export function Education() {
   const { isDark } = useTheme();
+  const { copy } = useLanguage();
 
   return (
     <section
@@ -78,12 +89,12 @@ export function Education() {
       {/* Background glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 top-32 h-[30rem] w-[30rem] rounded-full bg-fuchsia-500/[0.08] blur-[140px]"
+        className="homepage-ambient pointer-events-none absolute -left-40 top-32 h-[30rem] w-[30rem] rounded-full bg-fuchsia-500/[0.08] blur-[140px]"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-48 bottom-10 h-[32rem] w-[32rem] rounded-full bg-pink-500/[0.07] blur-[150px]"
+        className="homepage-ambient pointer-events-none absolute -right-48 bottom-10 h-[32rem] w-[32rem] rounded-full bg-pink-500/[0.07] blur-[150px]"
       />
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
@@ -111,7 +122,7 @@ export function Education() {
             <span className="h-px w-8 bg-stroke" />
 
             <span className="text-xs uppercase tracking-[0.3em] text-muted">
-              Education
+              {copy({ en: "Education", id: "Pendidikan" })}
             </span>
 
             <span className="h-px flex-1 bg-gradient-to-r from-pink-400/70 to-transparent" />
@@ -119,9 +130,9 @@ export function Education() {
 
           <div className="grid gap-6 md:grid-cols-12 md:items-end">
             <h2 className="text-5xl leading-[0.95] tracking-[-0.04em] text-text-primary sm:text-6xl md:col-span-8 md:text-7xl">
-              Learning that shaped
+              {copy({ en: "Learning that shaped", id: "Pembelajaran yang membentuk" })}
               <br />
-              my{" "}
+              {copy({ en: "my", id: "cara saya" })}{" "}
               <span
                 className={`font-display italic ${
                   isDark
@@ -129,15 +140,15 @@ export function Education() {
                     : "text-pink-600"
                 }`}
               >
-                practice.
+                {copy({ en: "practice.", id: "berkarya." })}
               </span>
             </h2>
 
             <p className="max-w-md text-sm leading-7 text-text-secondary md:col-span-4 md:text-base">
-              A foundation in software engineering combined
-              with hands-on experience in design,
-              development, visual communication, and
-              collaborative projects.
+              {copy({
+                en: "A foundation in software engineering combined with hands-on experience in design, development, visual communication, and collaborative projects.",
+                id: "Fondasi rekayasa perangkat lunak yang dipadukan dengan pengalaman langsung dalam desain, pengembangan, komunikasi visual, dan proyek kolaboratif.",
+              })}
             </p>
           </div>
         </motion.div>
@@ -219,7 +230,7 @@ export function Education() {
                     : "text-pink-700"
                 }`}
               >
-                Formal Education
+                {copy({ en: "Formal Education", id: "Pendidikan Formal" })}
               </span>
 
               <h3 className="mt-3 text-2xl font-medium tracking-tight text-text-primary md:text-3xl">
@@ -237,8 +248,10 @@ export function Education() {
                   />
 
                   <p className="text-sm md:text-base">
-                    Diploma 4 — Software Engineering
-                    Technology
+                    {copy({
+                      en: "Diploma 4 — Software Engineering Technology",
+                      id: "Diploma 4 — Teknologi Rekayasa Perangkat Lunak",
+                    })}
                   </p>
                 </div>
 
@@ -267,21 +280,21 @@ export function Education() {
                   />
 
                   <p className="text-[10px] uppercase tracking-[0.2em] text-muted">
-                    Relevant Coursework
+                    {copy({ en: "Relevant Coursework", id: "Mata Kuliah Relevan" })}
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {COURSES.map((course) => (
                     <span
-                      key={course}
+                      key={course.en}
                       className={`rounded-full border border-stroke bg-surface-elevated px-3 py-1.5 text-[10px] text-muted transition-all duration-300 hover:border-pink-400/40 ${
                         isDark
                           ? "shadow-[0_7px_18px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.07)] hover:text-pink-100 hover:shadow-[0_8px_22px_rgba(0,0,0,0.5),0_0_16px_rgba(236,72,153,0.1),inset_0_1px_0_rgba(255,255,255,0.1)]"
                           : "shadow-[0_7px_18px_rgba(65,40,53,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] hover:text-pink-700 hover:shadow-[0_8px_22px_rgba(65,40,53,0.12),0_0_16px_rgba(236,72,153,0.1),inset_0_1px_0_rgba(255,255,255,0.95)]"
                       }`}
                     >
-                      {course}
+                      {copy(course)}
                     </span>
                   ))}
                 </div>
@@ -347,11 +360,11 @@ export function Education() {
 
           <div>
             <p className="text-[10px] uppercase tracking-[0.23em] text-muted">
-              Selected learning experiences
+              {copy({ en: "Selected learning experiences", id: "Pengalaman belajar terpilih" })}
             </p>
 
             <h3 className="mt-1 text-2xl font-medium text-text-primary md:text-3xl">
-              Academic Projects
+              {copy({ en: "Academic Projects", id: "Proyek Akademik" })}
             </h3>
           </div>
         </motion.div>
@@ -444,7 +457,7 @@ export function Education() {
                             : "text-pink-700/80"
                         }
                       >
-                        {project.role}
+                        {copy(project.role)}
                       </span>
 
                       <span className="inline-flex items-center gap-1.5">
@@ -454,7 +467,7 @@ export function Education() {
                     </div>
 
                     <p className="mt-4 text-sm leading-6 text-muted transition-colors duration-300 group-hover:text-text-secondary">
-                      {project.description}
+                      {copy(project.description)}
                     </p>
                   </div>
                 </div>

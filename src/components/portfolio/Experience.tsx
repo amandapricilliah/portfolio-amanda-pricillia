@@ -12,17 +12,19 @@ import {
 import { useRef } from "react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
+import type { Bilingual } from "./LanguageProvider";
 
 type ExperienceItem = {
   number: string;
   company: string;
-  role: string;
+  role: Bilingual;
   location: string;
   period: string;
   logo: string;
   logoBg?: string;
-  summary: string;
-  highlights: string[];
+  summary: Bilingual;
+  highlights: Bilingual[];
   tools: string[];
 };
 
@@ -30,16 +32,18 @@ const EXPERIENCES: ExperienceItem[] = [
   {
     number: "01",
     company: "PT Resolusiweb Digital Media",
-    role: "UI/UX Designer & Web Developer",
+    role: { en: "UI/UX Designer & Web Developer", id: "UI/UX Designer & Web Developer" },
     location: "Tangerang, Indonesia",
     period: "Nov 2025 — Jun 2026",
     logo: "/images/resolusiweb.png",
-    summary:
-      "Designed responsive websites and landing pages while developing and maintaining Laravel and WordPress-based digital products.",
+    summary: {
+      en: "Designed responsive websites and landing pages while developing and maintaining Laravel and WordPress-based digital products.",
+      id: "Merancang website dan landing page responsif sekaligus mengembangkan serta memelihara produk digital berbasis Laravel dan WordPress.",
+    },
     highlights: [
-      "Created wireframes, prototypes, and responsive website designs.",
-      "Developed new Laravel features and resolved website issues.",
-      "Produced branding assets, promotional content, and documentation.",
+      { en: "Created wireframes, prototypes, and responsive website designs.", id: "Membuat wireframe, prototipe, dan desain website responsif." },
+      { en: "Developed new Laravel features and resolved website issues.", id: "Mengembangkan fitur Laravel baru dan menyelesaikan kendala website." },
+      { en: "Produced branding assets, promotional content, and documentation.", id: "Menghasilkan aset branding, konten promosi, dan dokumentasi." },
     ],
     tools: [
       "Figma",
@@ -51,16 +55,18 @@ const EXPERIENCES: ExperienceItem[] = [
   {
     number: "02",
     company: "iNews Media Group",
-    role: "UI/UX Designer",
+    role: { en: "UI/UX Designer", id: "UI/UX Designer" },
     location: "Jakarta, Indonesia",
     period: "May 2024 — Dec 2024",
     logo: "/images/MNC_Media_2015.png",
-    summary:
-      "Designed user-focused features for the iNews digital platform and contributed to front-end implementation for a short-form news experience.",
+    summary: {
+      en: "Designed user-focused features for the iNews digital platform and contributed to front-end implementation for a short-form news experience.",
+      id: "Merancang fitur yang berfokus pada pengguna untuk platform digital iNews serta berkontribusi pada implementasi front-end pengalaman berita video singkat.",
+    },
     highlights: [
-      "Designed the User Complaint feature through user research.",
-      "Created user flows, wireframes, and prototypes for key features.",
-      "Developed the iNews Byte interface using CodeIgniter 3.",
+      { en: "Designed the User Complaint feature through user research.", id: "Merancang fitur User Complaint melalui riset pengguna." },
+      { en: "Created user flows, wireframes, and prototypes for key features.", id: "Membuat user flow, wireframe, dan prototipe untuk fitur utama." },
+      { en: "Developed the iNews Byte interface using CodeIgniter 3.", id: "Mengembangkan antarmuka iNews Byte menggunakan CodeIgniter 3." },
     ],
     tools: [
       "UI/UX Design",
@@ -72,17 +78,19 @@ const EXPERIENCES: ExperienceItem[] = [
   {
     number: "03",
     company: "PT Max Samasta Group",
-    role: "UI/UX Designer & Front-End Developer",
+    role: { en: "UI/UX Designer & Front-End Developer", id: "UI/UX Designer & Front-End Developer" },
     location: "Bogor, Indonesia",
     period: "Mar 2024 — May 2024",
     logo: "/images/Logo-baru-maxsamasta-putih.png",
     logoBg: "bg-[#090909]",
-    summary:
-      "Designed and implemented a location and photo-based employee attendance platform with clear user and administrative flows.",
+    summary: {
+      en: "Designed and implemented a location and photo-based employee attendance platform with clear user and administrative flows.",
+      id: "Merancang dan mengimplementasikan platform absensi karyawan berbasis lokasi dan foto dengan alur pengguna serta administrasi yang jelas.",
+    },
     highlights: [
-      "Designed employee attendance interfaces and dashboard flows.",
-      "Improved internal attendance data management and usability.",
-      "Implemented the front-end interface using CodeIgniter 3.",
+      { en: "Designed employee attendance interfaces and dashboard flows.", id: "Merancang antarmuka absensi karyawan dan alur dashboard." },
+      { en: "Improved internal attendance data management and usability.", id: "Meningkatkan pengelolaan data absensi internal dan kemudahan penggunaan." },
+      { en: "Implemented the front-end interface using CodeIgniter 3.", id: "Mengimplementasikan antarmuka front-end menggunakan CodeIgniter 3." },
     ],
     tools: [
       "UI Design",
@@ -94,16 +102,18 @@ const EXPERIENCES: ExperienceItem[] = [
   {
     number: "04",
     company: "Crewnesia Foundation",
-    role: "Social Media Specialist",
+    role: { en: "Social Media Specialist", id: "Spesialis Media Sosial" },
     location: "Bogor, Indonesia",
     period: "Aug 2022 — Dec 2022",
     logo: "/images/crewnesia.png",
-    summary:
-      "Developed social media content and visual strategies to strengthen digital communication and maintain brand consistency.",
+    summary: {
+      en: "Developed social media content and visual strategies to strengthen digital communication and maintain brand consistency.",
+      id: "Mengembangkan konten media sosial dan strategi visual untuk memperkuat komunikasi digital serta menjaga konsistensi merek.",
+    },
     highlights: [
-      "Planned social media content based on digital trends.",
-      "Created visual assets to improve audience interaction.",
-      "Collaborated on digital campaigns and promotional materials.",
+      { en: "Planned social media content based on digital trends.", id: "Merencanakan konten media sosial berdasarkan tren digital." },
+      { en: "Created visual assets to improve audience interaction.", id: "Membuat aset visual untuk meningkatkan interaksi audiens." },
+      { en: "Collaborated on digital campaigns and promotional materials.", id: "Berkolaborasi dalam kampanye digital dan materi promosi." },
     ],
     tools: [
       "Content Strategy",
@@ -117,6 +127,7 @@ const EXPERIENCES: ExperienceItem[] = [
 export function Experience() {
   const sectionRef = useRef<HTMLElement>(null);
   const { isDark } = useTheme();
+  const { copy } = useLanguage();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -138,12 +149,12 @@ export function Experience() {
       {/* Ambient background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-52 top-[20%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
+        className="homepage-ambient pointer-events-none absolute -left-52 top-[20%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-52 bottom-[10%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.08] blur-[160px]"
+        className="homepage-ambient pointer-events-none absolute -right-52 bottom-[10%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.08] blur-[160px]"
       />
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
@@ -171,7 +182,7 @@ export function Experience() {
             <span className="h-px w-8 bg-stroke" />
 
             <span className="text-xs uppercase tracking-[0.3em] text-muted">
-              Professional Experience
+              {copy({ en: "Professional Experience", id: "Pengalaman Profesional" })}
             </span>
 
             <span className="h-px flex-1 bg-gradient-to-r from-pink-400/70 to-transparent" />
@@ -179,7 +190,7 @@ export function Experience() {
 
           <div className="grid gap-7 md:grid-cols-12 md:items-end">
             <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-text-primary sm:text-6xl md:col-span-8 md:text-7xl">
-              Where ideas became
+              {copy({ en: "Where ideas became", id: "Ketika ide menjadi" })}
               <br />
 
               <span
@@ -189,15 +200,15 @@ export function Experience() {
                     : "text-pink-600"
                 }`}
               >
-                real experiences.
+                {copy({ en: "real experiences.", id: "pengalaman nyata." })}
               </span>
             </h2>
 
             <p className="max-w-md text-sm leading-7 text-text-secondary md:col-span-4 md:text-base">
-              A collection of roles where I combined
-              design, development, visual communication,
-              and collaboration to solve practical digital
-              challenges.
+              {copy({
+                en: "A collection of roles where I combined design, development, visual communication, and collaboration to solve practical digital challenges.",
+                id: "Rangkaian pengalaman yang memadukan desain, pengembangan, komunikasi visual, dan kolaborasi untuk menyelesaikan tantangan digital yang nyata.",
+              })}
             </p>
           </div>
         </motion.div>
@@ -245,19 +256,21 @@ export function Experience() {
                     : "text-pink-700/75"
                 }`}
               >
-                My journey
+                {copy({ en: "My journey", id: "Perjalanan saya" })}
               </p>
 
               <h3 className="mt-4 max-w-sm text-3xl font-medium leading-tight text-text-primary md:text-4xl">
-                Designing, building, and learning through
-                every role.
+                {copy({
+                  en: "Designing, building, and learning through every role.",
+                  id: "Merancang, membangun, dan belajar melalui setiap peran.",
+                })}
               </h3>
 
               <p className="mt-6 max-w-sm text-sm leading-7 text-muted">
-                Each experience shaped how I approach
-                users, systems, visual details, and the
-                process of turning requirements into
-                functional outcomes.
+                {copy({
+                  en: "Each experience shaped how I approach users, systems, visual details, and the process of turning requirements into functional outcomes.",
+                  id: "Setiap pengalaman membentuk cara saya memahami pengguna, sistem, detail visual, dan proses menerjemahkan kebutuhan menjadi hasil yang fungsional.",
+                })}
               </p>
 
               <div className="mt-8 flex items-center gap-3">
@@ -321,7 +334,7 @@ export function Experience() {
                       style={{
                         boxShadow: isDark
                           ? "0 0 0 6px #050505, 0 0 18px rgba(236,72,153,0.28)"
-                          : "0 0 0 6px #f7f4f6, 0 0 18px rgba(219,39,119,0.2)",
+                          : "0 0 0 6px #ffffff, 0 0 18px rgba(15,23,42,0.12)",
                       }}
                     >
                       <span className="h-2 w-2 rounded-full bg-pink-400 shadow-[0_0_12px_rgba(244,114,182,1)] transition-transform duration-300 group-hover:scale-150" />
@@ -409,7 +422,7 @@ export function Experience() {
                                     : "text-pink-700/80"
                                 }`}
                               >
-                                {experience.role}
+                                {copy(experience.role)}
                               </p>
                             </div>
                           </div>
@@ -459,7 +472,7 @@ export function Experience() {
                         </div>
 
                         <p className="mt-6 text-base leading-7 text-text-secondary">
-                          {experience.summary}
+                          {copy(experience.summary)}
                         </p>
 
                         {/* Highlights */}
@@ -467,7 +480,7 @@ export function Experience() {
                           {experience.highlights.map(
                             (highlight) => (
                               <div
-                                key={highlight}
+                                key={highlight.en}
                                 className="flex items-start gap-3 text-sm leading-6 text-muted transition-colors duration-300 group-hover:text-text-secondary"
                               >
                                 <Sparkles
@@ -478,7 +491,7 @@ export function Experience() {
                                   }`}
                                 />
 
-                                <p>{highlight}</p>
+                                <p>{copy(highlight)}</p>
                               </div>
                             ),
                           )}

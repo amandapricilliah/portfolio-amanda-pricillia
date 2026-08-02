@@ -14,6 +14,7 @@ import { Journal } from "@/components/portfolio/Journal";
 import { Explorations } from "@/components/portfolio/Explorations";
 import { Stats } from "@/components/portfolio/Stats";
 import { Contact } from "@/components/portfolio/Contact";
+import { LanguageProvider } from "@/components/portfolio/LanguageProvider";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -23,43 +24,38 @@ function Index() {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <div className="min-h-screen bg-bg font-body text-text-primary">
-      {/* Loading screen */}
-      <AnimatePresence>
-        {isLoading && (
-          <LoadingScreen
-            key="loading-screen"
-            onComplete={() => setIsLoading(false)}
-          />
-        )}
-      </AnimatePresence>
+    <LanguageProvider>
+      <div className="homepage-shell min-h-screen bg-bg font-body text-text-primary">
+        <AnimatePresence>
+          {isLoading && (
+            <LoadingScreen
+              key="loading-screen"
+              onComplete={() => setIsLoading(false)}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Website muncul dengan animasi fade-in */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: isLoading ? 0 : 1,
-        }}
-        transition={{
-          duration: 0.8,
-          ease: "easeOut",
-        }}
-      >
-        <Navbar />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoading ? 0 : 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <Navbar />
 
-        <main>
-          <Hero />
-          <About />
-          <Education />
-          <Experience />
-          <Works />
-          <Explorations />
-          <Certificates />
-          <Journal />
-          <Stats />
-          <Contact />
-        </main>
-      </motion.div>
-    </div>
+          <main>
+            <Hero />
+            <About />
+            <Education />
+            <Experience />
+            <Works />
+            <Explorations />
+            <Certificates />
+            <Journal />
+            <Stats />
+            <Contact />
+          </main>
+        </motion.div>
+      </div>
+    </LanguageProvider>
   );
 }

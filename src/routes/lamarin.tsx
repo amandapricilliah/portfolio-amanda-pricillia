@@ -1,5 +1,7 @@
+// LAMARIN CASE STUDY — V2 · GLASS TOPBAR + EN/ID + CLEAN LIGHT MODE
 import { createFileRoute } from "@tanstack/react-router";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 import {
   AnimatePresence,
@@ -36,7 +38,7 @@ import {
   X,
 } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -48,6 +50,294 @@ const HERO_VIDEO_URL = "/videos/lamarin/lamarin-hero.mp4";
 const HERO_POSTER_URL = "/images/lamarin/lamarin-hero-poster.jpg";
 const LIVE_PRODUCT_URL = "https://lamarinidn.vercel.app";
 const DEMO_URL = "https://lamarinidn.vercel.app/demo";
+
+type Language = "en" | "id";
+
+const INDONESIAN_COPY: Record<string, string> = {
+  "Overview": "Ringkasan",
+  "Challenge": "Tantangan",
+  "Strategy": "Strategi",
+  "Features": "Fitur",
+  "Engineering": "Engineering",
+  "QA & Release": "QA & Rilis",
+  "Reflection": "Refleksi",
+  "Back to projects": "Kembali ke proyek",
+  "Choose language": "Pilih bahasa",
+  "LAMARIN case-study sections": "Bagian studi kasus LAMARIN",
+  "Full-stack product · Responsive web application": "Produk full-stack · Aplikasi web responsif",
+  "A private job-application management website that helps job seekers capture opportunities, track recruitment progress, plan next actions, evaluate performance, and manage supporting documents in one focused workspace.": "Website manajemen lamaran kerja pribadi yang membantu pencari kerja mencatat peluang, memantau proses rekrutmen, merencanakan tindakan berikutnya, mengevaluasi performa, dan mengelola dokumen pendukung dalam satu workspace yang terfokus.",
+  "Open live product": "Buka produk langsung",
+  "Read case study": "Baca studi kasus",
+  "Scroll to explore": "Gulir untuk menjelajah",
+  "Project overview": "Ringkasan proyek",
+  "What exactly is LAMARIN?": "Apa sebenarnya LAMARIN?",
+  "LAMARIN is a private job-application management website for people handling multiple recruitment processes at the same time.": "LAMARIN adalah website manajemen lamaran kerja pribadi untuk orang yang menangani beberapa proses rekrutmen secara bersamaan.",
+  "It connects vacancy capture, application records, Kanban tracking, recruitment planning, personal analytics, CVs, and cover letters in one account-based workspace. It is not a job marketplace and it is not an applicant-tracking system for recruiters. The product is built for the job seeker.": "LAMARIN menghubungkan pencatatan lowongan, data lamaran, pelacakan Kanban, perencanaan rekrutmen, analitik pribadi, CV, dan surat lamaran dalam satu workspace berbasis akun. Produk ini bukan marketplace lowongan dan bukan applicant-tracking system untuk rekruter. LAMARIN dibangun khusus untuk pencari kerja.",
+  "Product type": "Jenis produk",
+  "Responsive full-stack web application": "Aplikasi web full-stack responsif",
+  "Primary user": "Pengguna utama",
+  "Active job seekers": "Pencari kerja aktif",
+  "My contribution": "Kontribusi saya",
+  "Product, BA, UX/UI, engineering, and QA": "Produk, BA, UX/UI, engineering, dan QA",
+  "Release status": "Status rilis",
+  "Implemented and deployed to production": "Diimplementasikan dan dirilis ke production",
+  "End-to-end ownership": "Kepemilikan end-to-end",
+  "One project viewed through every delivery discipline.": "Satu proyek yang dikerjakan dari setiap disiplin delivery.",
+  "Product & Business Analysis": "Analisis Produk & Bisnis",
+  "Defined the problem, user, MVP boundary, feature requirements, business rules, priorities, and acceptance conditions.": "Mendefinisikan masalah, pengguna, batas MVP, kebutuhan fitur, aturan bisnis, prioritas, dan kondisi penerimaan.",
+  "UX & UI Design": "Desain UX & UI",
+  "Designed the information architecture, application flows, responsive interface, data hierarchy, states, and visual system.": "Merancang information architecture, alur aplikasi, antarmuka responsif, hierarki data, state, dan sistem visual.",
+  "Frontend Engineering": "Frontend Engineering",
+  "Implemented the website interface, routing, forms, dashboard views, interactions, responsive behavior, and feedback states.": "Mengimplementasikan antarmuka website, routing, form, tampilan dashboard, interaksi, perilaku responsif, dan feedback state.",
+  "Backend & Data": "Backend & Data",
+  "Implemented authentication, application logic, PostgreSQL data access, private storage, document handling, and ownership controls.": "Mengimplementasikan autentikasi, logika aplikasi, akses data PostgreSQL, private storage, pengelolaan dokumen, dan kontrol kepemilikan.",
+  "Validated end-to-end workflows, production authentication, storage policies, persistence, responsive behavior, and deployment.": "Memvalidasi alur end-to-end, autentikasi production, storage policy, persistence, perilaku responsif, dan deployment.",
+  "Product challenge": "Tantangan produk",
+  "The job search already feels like work. The tools make it harder.": "Mencari kerja sudah terasa seperti pekerjaan. Alat yang terpisah membuatnya semakin rumit.",
+  "One application can involve a job portal, spreadsheet, inbox, calendar, notes app, and several document folders. As the pipeline grows, users lose a reliable view of where each opportunity stands and what should happen next.": "Satu lamaran dapat melibatkan portal lowongan, spreadsheet, inbox, kalender, aplikasi catatan, dan beberapa folder dokumen. Ketika pipeline bertambah, pengguna kehilangan gambaran yang andal tentang posisi setiap peluang dan tindakan berikutnya.",
+  "Information becomes fragmented": "Informasi menjadi terfragmentasi",
+  "Company details, vacancy links, notes, schedules, and documents live in different tools.": "Informasi perusahaan, tautan lowongan, catatan, jadwal, dan dokumen tersimpan di alat yang berbeda.",
+  "Progress becomes difficult to scan": "Progress sulit dipindai",
+  "Users repeatedly reopen individual records just to understand the state of the recruitment pipeline.": "Pengguna harus berulang kali membuka setiap data hanya untuk memahami kondisi pipeline rekrutmen.",
+  "Important actions are easy to miss": "Tindakan penting mudah terlewat",
+  "Interview preparation, assessments, recruiter follow-ups, and deadlines compete with unrelated activity.": "Persiapan wawancara, assessment, follow-up rekruter, dan deadline bercampur dengan aktivitas lain yang tidak terkait.",
+  "Performance remains invisible": "Performa belum terlihat",
+  "Users cannot easily see which sources perform well, where applications stop progressing, or which records need attention.": "Pengguna sulit melihat sumber lowongan yang efektif, tahap tempat lamaran berhenti berkembang, atau data yang perlu segera diperhatikan.",
+  "“Active job seekers need one reliable workspace to understand where every application stands, what must happen next, and what their own job-search data is telling them.”": "“Pencari kerja aktif membutuhkan satu workspace yang andal untuk memahami posisi setiap lamaran, tindakan berikutnya, dan makna dari data pencarian kerja mereka sendiri.”",
+  "Product problem statement": "Pernyataan masalah produk",
+  "Product strategy": "Strategi produk",
+  "One workflow: capture, track, plan, and learn.": "Satu alur: catat, pantau, rencanakan, dan pelajari.",
+  "The product strategy was to reduce tool switching without turning LAMARIN into an oversized recruitment platform. Every core feature supports one of four decisions in the job seeker’s workflow.": "Strategi produk berfokus pada pengurangan perpindahan alat tanpa menjadikan LAMARIN sebagai platform rekrutmen yang terlalu besar. Setiap fitur inti mendukung salah satu dari empat keputusan dalam alur pencari kerja.",
+  "Capture": "Catat",
+  "Create a reliable application record.": "Buat data lamaran yang dapat diandalkan.",
+  "Track": "Pantau",
+  "Understand progress across the pipeline.": "Pahami progress di seluruh pipeline.",
+  "Plan": "Rencanakan",
+  "Turn applications into scheduled actions.": "Ubah lamaran menjadi tindakan terjadwal.",
+  "Learn": "Pelajari",
+  "Use personal data to improve decisions.": "Gunakan data pribadi untuk memperbaiki keputusan.",
+  "Included in the production scope": "Termasuk dalam scope production",
+  "Application capture and structured records": "Pencatatan lamaran dan data terstruktur",
+  "Dashboard, Board, Calendar, and Insights": "Dashboard, Board, Calendar, dan Insights",
+  "Next actions, reminders, and attention states": "Tindakan berikutnya, reminder, dan attention state",
+  "Private CV and cover-letter management": "Pengelolaan CV dan surat lamaran pribadi",
+  "Email and Google authentication": "Autentikasi email dan Google",
+  "Demo mode, responsive design, and light/dark theme": "Mode demo, desain responsif, dan tema terang/gelap",
+  "Deliberately outside the MVP": "Sengaja dikeluarkan dari MVP",
+  "Job marketplace and employer vacancy publishing": "Marketplace lowongan dan publikasi lowongan perusahaan",
+  "Recruiter or company applicant-tracking dashboard": "Dashboard applicant tracking untuk rekruter atau perusahaan",
+  "Automatic job submission": "Pengiriman lamaran otomatis",
+  "AI matching and resume generation": "AI matching dan pembuatan resume",
+  "Team collaboration and public profiles": "Kolaborasi tim dan profil publik",
+  "Native mobile application and paid subscription": "Aplikasi mobile native dan langganan berbayar",
+  "Complete feature walkthrough": "Penjelasan lengkap fitur",
+  "Every feature shown in its real website context.": "Setiap fitur ditampilkan dalam konteks website yang sebenarnya.",
+  "The mockups below use desktop browser frames because LAMARIN is a responsive web application. Each section explains the user decision supported by the feature—not only what appears on the screen.": "Mockup berikut menggunakan frame browser desktop karena LAMARIN merupakan aplikasi web responsif. Setiap bagian menjelaskan keputusan pengguna yang didukung oleh fitur, bukan hanya elemen yang terlihat di layar.",
+  "Responsive experience": "Pengalaman responsif",
+  "One website across viewport, theme, and account state.": "Satu website untuk berbagai viewport, tema, dan kondisi akun.",
+  "The interface adapts its navigation, content density, and interaction layout across desktop, tablet, and mobile widths. Light and dark themes preserve the same hierarchy, while Demo mode clearly identifies temporary data.": "Antarmuka menyesuaikan navigasi, kepadatan konten, dan layout interaksi pada ukuran desktop, tablet, dan mobile. Tema terang dan gelap mempertahankan hierarki yang sama, sementara mode Demo menandai data sementara dengan jelas.",
+  "Engineering and security": "Engineering dan keamanan",
+  "Privacy enforced below the interface.": "Privasi diterapkan hingga ke lapisan di bawah antarmuka.",
+  "LAMARIN stores private recruitment information and personal documents. Security therefore cannot depend on whether a button or route is hidden in the interface.": "LAMARIN menyimpan informasi rekrutmen dan dokumen pribadi. Karena itu, keamanan tidak boleh bergantung pada tombol atau route yang sekadar disembunyikan dari antarmuka.",
+  "Account identity is checked through authentication, application records are protected with Row Level Security, and documents are stored in a private bucket under folders scoped to the user ID.": "Identitas akun diperiksa melalui autentikasi, data lamaran dilindungi menggunakan Row Level Security, dan dokumen disimpan dalam private bucket pada folder yang dibatasi berdasarkan user ID.",
+  "Presentation": "Presentasi",
+  "Next.js, React, and TypeScript": "Next.js, React, dan TypeScript",
+  "Responsive website pages, server and client components, routes, forms, interface states, and interaction logic.": "Halaman website responsif, server dan client component, route, form, interface state, dan logika interaksi.",
+  "Application": "Aplikasi",
+  "Business logic and route handling": "Logika bisnis dan pengelolaan route",
+  "Application CRUD, status movement, reminder handling, authentication callbacks, validation, and document replacement workflow.": "CRUD lamaran, perpindahan status, pengelolaan reminder, callback autentikasi, validasi, dan alur penggantian dokumen.",
+  "Data": "Data",
+  "Application records, ownership, constraints, queries, persistence, and Row Level Security policies.": "Data lamaran, kepemilikan, constraint, query, persistence, dan policy Row Level Security.",
+  "Files": "File",
+  "User-scoped folders, owner-only policies, allowed file types, file-size restriction, and protected downloads.": "Folder berbasis pengguna, policy khusus pemilik, jenis file yang diizinkan, batas ukuran file, dan unduhan terlindungi.",
+  "Delivery": "Delivery",
+  "Protected production deployment": "Deployment production yang terlindungi",
+  "Environment separation, OAuth callback configuration, protected routes, Vercel deployment, and production smoke testing.": "Pemisahan environment, konfigurasi callback OAuth, protected route, deployment Vercel, dan production smoke testing.",
+  "Safe replacement workflow": "Alur penggantian yang aman",
+  "Replace safely. Clean up automatically.": "Ganti dengan aman. Bersihkan secara otomatis.",
+  "When a CV or cover letter is replaced, the new file is validated and uploaded first. Metadata is updated only after success, and the previous object is then removed so a failed replacement does not erase the user’s existing document.": "Ketika CV atau surat lamaran diganti, file baru divalidasi dan diunggah terlebih dahulu. Metadata hanya diperbarui setelah proses berhasil, kemudian file lama dihapus agar kegagalan penggantian tidak menghilangkan dokumen pengguna yang sudah ada.",
+  "Validate the account, file type, and 5 MB limit.": "Validasi akun, jenis file, dan batas 5 MB.",
+  "Upload the new document to the authenticated user folder.": "Unggah dokumen baru ke folder pengguna yang telah terautentikasi.",
+  "Update the application record with the new storage metadata.": "Perbarui data lamaran menggunakan metadata storage baru.",
+  "Remove the previous file only after the replacement succeeds.": "Hapus file lama hanya setelah penggantian berhasil.",
+  "Return authorized download access for the current document.": "Berikan akses unduhan terotorisasi untuk dokumen terbaru.",
+  "QA and release": "QA dan rilis",
+  "Tested as one complete user journey.": "Diuji sebagai satu perjalanan pengguna yang utuh.",
+  "Validation covered the product from account access to production deployment. The objective was not merely to prove that individual controls respond, but that records, reminders, metrics, documents, and ownership remain correct across the complete workflow.": "Validasi mencakup produk sejak akses akun hingga deployment production. Tujuannya bukan hanya membuktikan bahwa setiap kontrol merespons, tetapi memastikan data, reminder, metrik, dokumen, dan kepemilikan tetap benar di sepanjang alur lengkap.",
+  "Area": "Area",
+  "Validated scope": "Scope yang divalidasi",
+  "Result": "Hasil",
+  "Authentication": "Autentikasi",
+  "Email access, Google OAuth, protected routes, forgot password, and reset password": "Akses email, Google OAuth, protected route, lupa kata sandi, dan reset kata sandi",
+  "Passed": "Lulus",
+  "Application capture": "Pencatatan lamaran",
+  "Job-link import, manual entry, validation, document selection, and new record creation": "Impor tautan lowongan, input manual, validasi, pemilihan dokumen, dan pembuatan data baru",
+  "Application management": "Pengelolaan lamaran",
+  "Detail, editing, status updates, persistence, search, and cross-view consistency": "Detail, pengeditan, pembaruan status, persistence, pencarian, dan konsistensi antar-view",
+  "Planning and analytics": "Perencanaan dan analitik",
+  "Reminder creation, calendar display, upcoming actions, metrics, filters, and attention states": "Pembuatan reminder, tampilan kalender, tindakan mendatang, metrik, filter, dan attention state",
+  "Document workflow": "Alur dokumen",
+  "Upload, download, replacement, file validation, and automatic old-file deletion": "Unggah, unduh, penggantian, validasi file, dan penghapusan otomatis file lama",
+  "Data privacy": "Privasi data",
+  "Row Level Security, private bucket, authenticated policies, and account-scoped folders": "Row Level Security, private bucket, policy terautentikasi, dan folder berbasis akun",
+  "Production release": "Rilis production",
+  "Live deployment, authentication callback, responsive review, theme behavior, and smoke test": "Deployment langsung, callback autentikasi, review responsif, perilaku tema, dan smoke test",
+  "Delivery process": "Proses delivery",
+  "From problem discovery to live release.": "Dari penemuan masalah hingga rilis langsung.",
+  "Discover": "Discover",
+  "Map the fragmented job-search workflow": "Petakan alur pencarian kerja yang terfragmentasi",
+  "Reviewed how job seekers move between vacancy platforms, spreadsheets, email, calendars, notes, and document folders during one recruitment process.": "Meninjau bagaimana pencari kerja berpindah antara platform lowongan, spreadsheet, email, kalender, catatan, dan folder dokumen dalam satu proses rekrutmen.",
+  "Define": "Define",
+  "Convert the problem into a focused product scope": "Ubah masalah menjadi scope produk yang terfokus",
+  "Prioritized application capture, pipeline tracking, planning, analytics, private documents, and account access while excluding recruiter tooling, automatic applications, and broad marketplace features.": "Memprioritaskan pencatatan lamaran, pelacakan pipeline, perencanaan, analitik, dokumen pribadi, dan akses akun sambil mengecualikan alat rekruter, lamaran otomatis, dan fitur marketplace yang luas.",
+  "Design": "Design",
+  "Create one mental model across every view": "Bangun satu mental model di seluruh view",
+  "Designed Dashboard, Board, Calendar, and Insights as different perspectives of the same application record, supported by detail, reminder, document, and authentication flows.": "Merancang Dashboard, Board, Calendar, dan Insights sebagai perspektif berbeda dari data lamaran yang sama, didukung oleh alur detail, reminder, dokumen, dan autentikasi.",
+  "Develop": "Develop",
+  "Connect interface, data, security, and file workflows": "Hubungkan antarmuka, data, keamanan, dan alur file",
+  "Built the responsive product with Next.js, React, TypeScript, Supabase Auth, PostgreSQL, private Storage, protected routes, and Vercel deployment.": "Membangun produk responsif menggunakan Next.js, React, TypeScript, Supabase Auth, PostgreSQL, private Storage, protected route, dan deployment Vercel.",
+  "Validate": "Validate",
+  "Test the complete production journey": "Uji perjalanan production secara lengkap",
+  "Verified account access, application management, status persistence, reminders, document upload and replacement, ownership policies, and production behavior.": "Memverifikasi akses akun, pengelolaan lamaran, persistence status, reminder, unggah dan penggantian dokumen, ownership policy, dan perilaku production.",
+  "Outcome and reflection": "Hasil dan refleksi",
+  "A functioning product, not a static portfolio concept.": "Produk yang berfungsi, bukan konsep portofolio statis.",
+  "LAMARIN was implemented, secured, tested, and deployed as a working website. Its strongest design decision is not a single screen—it is the consistency of one application record across capture, tracking, planning, analytics, and document workflows.": "LAMARIN diimplementasikan, diamankan, diuji, dan dirilis sebagai website yang berfungsi. Keputusan desain terkuatnya bukan satu layar, melainkan konsistensi satu data lamaran pada alur pencatatan, pelacakan, perencanaan, analitik, dan dokumen.",
+  "What worked": "Hal yang berhasil",
+  "Dashboard, Board, Calendar, and Insights answer different questions while remaining synchronized through one data model.": "Dashboard, Board, Calendar, dan Insights menjawab pertanyaan yang berbeda sambil tetap tersinkronisasi melalui satu model data.",
+  "What required care": "Hal yang membutuhkan perhatian",
+  "OAuth callbacks, password recovery, document replacement, and owner-only policies required validation beyond the visible interface.": "Callback OAuth, pemulihan kata sandi, penggantian dokumen, dan policy khusus pemilik memerlukan validasi di luar antarmuka yang terlihat.",
+  "What comes next": "Langkah berikutnya",
+  "Future iterations should use real behavioral data and user research to improve the workflow before expanding into broader features.": "Iterasi berikutnya perlu menggunakan data perilaku nyata dan riset pengguna untuk memperbaiki alur sebelum memperluas fitur.",
+  "Explore the real product in its website environment.": "Jelajahi produk nyata dalam lingkungan websitenya.",
+  "Open the live deployment or enter Demo mode to review the complete responsive workflow without relying only on this case study.": "Buka deployment langsung atau masuk ke mode Demo untuk meninjau alur responsif secara lengkap tanpa hanya mengandalkan studi kasus ini.",
+  "Open live LAMARIN": "Buka LAMARIN langsung",
+  "Open demo mode": "Buka mode demo",
+  "Overview and priority": "Ringkasan dan prioritas",
+  "Dashboard": "Dashboard",
+  "What needs attention today?": "Apa yang perlu diperhatikan hari ini?",
+  "The dashboard is the user’s starting point. It summarizes the current application pipeline, recruitment performance, recent activity, and upcoming actions so the user can decide what to do next without reopening every record.": "Dashboard menjadi titik awal pengguna. Halaman ini merangkum pipeline lamaran, performa rekrutmen, aktivitas terbaru, dan tindakan mendatang agar pengguna dapat menentukan langkah berikutnya tanpa membuka ulang setiap data.",
+  "Total applications and current pipeline distribution": "Total lamaran dan distribusi pipeline saat ini",
+  "Interview and offer progression": "Perkembangan interview dan offer",
+  "Application activity and recent movement": "Aktivitas lamaran dan perubahan terbaru",
+  "Upcoming interviews, follow-ups, and priorities": "Interview, follow-up, dan prioritas mendatang",
+  "Fast data capture": "Pencatatan data cepat",
+  "Import or add an application": "Impor atau tambah lamaran",
+  "How can a vacancy become a structured record quickly?": "Bagaimana lowongan dapat menjadi data terstruktur dengan cepat?",
+  "Users can begin with the original vacancy link or enter an application manually. Available information can be captured first, while incomplete fields remain editable instead of blocking the workflow.": "Pengguna dapat memulai dari tautan lowongan asli atau memasukkan lamaran secara manual. Informasi yang tersedia dapat dicatat lebih dahulu, sementara field yang belum lengkap tetap dapat diedit tanpa menghambat alur.",
+  "Job-link import for available vacancy information": "Impor tautan untuk informasi lowongan yang tersedia",
+  "Manual entry when no link is available": "Input manual ketika tautan tidak tersedia",
+  "Position, company, location, source, salary, and notes": "Posisi, perusahaan, lokasi, sumber, gaji, dan catatan",
+  "Status, next action, reminder, CV, and cover letter": "Status, tindakan berikutnya, reminder, CV, dan surat lamaran",
+  "Single source of truth": "Satu sumber informasi utama",
+  "Application detail and editing": "Detail dan pengeditan lamaran",
+  "Where does the complete recruitment context live?": "Di mana seluruh konteks rekrutmen disimpan?",
+  "Each application keeps the vacancy data, original source, personal notes, salary range, recruitment status, reminders, and supporting documents in one detailed view. Editing updates the same record used across Dashboard, Board, Calendar, and Insights.": "Setiap lamaran menyimpan data lowongan, sumber asli, catatan pribadi, rentang gaji, status rekrutmen, reminder, dan dokumen pendukung dalam satu tampilan detail. Pengeditan memperbarui data yang sama pada Dashboard, Board, Calendar, dan Insights.",
+  "Complete position and company information": "Informasi posisi dan perusahaan secara lengkap",
+  "Original vacancy link and source": "Tautan dan sumber lowongan asli",
+  "Personal notes and recruitment context": "Catatan pribadi dan konteks rekrutmen",
+  "Next action, reminder, and supporting files": "Tindakan berikutnya, reminder, dan file pendukung",
+  "Visual pipeline management": "Pengelolaan pipeline visual",
+  "Kanban Board": "Kanban Board",
+  "Where is every application in the recruitment process?": "Di mana posisi setiap lamaran dalam proses rekrutmen?",
+  "The Board turns application status into a visual workflow. Users can scan the entire pipeline, search within the board, open details in context, and move cards between stages while preserving the underlying record.": "Board mengubah status lamaran menjadi alur visual. Pengguna dapat memindai seluruh pipeline, mencari data di dalam board, membuka detail sesuai konteks, dan memindahkan card antar-tahap tanpa mengubah sumber datanya.",
+  "Saved, Applied, Interview, Offer, and Closed stages": "Tahap Saved, Applied, Interview, Offer, dan Closed",
+  "Drag-and-drop status updates": "Pembaruan status melalui drag-and-drop",
+  "Search within the board context": "Pencarian dalam konteks board",
+  "Application detail without leaving the workspace": "Detail lamaran tanpa meninggalkan workspace",
+  "Time-based planning": "Perencanaan berbasis waktu",
+  "Calendar": "Kalender",
+  "What happens next, and when?": "Apa yang terjadi berikutnya, dan kapan?",
+  "The Calendar translates next actions into a readable schedule. Interviews, tests, deadlines, and recruiter follow-ups remain connected to the related application instead of becoming isolated calendar entries.": "Calendar mengubah tindakan berikutnya menjadi jadwal yang mudah dibaca. Interview, tes, deadline, dan follow-up rekruter tetap terhubung dengan lamaran terkait, bukan menjadi event kalender yang terpisah.",
+  "Daily, weekly, and monthly views": "Tampilan harian, mingguan, dan bulanan",
+  "Application-linked recruitment events": "Event rekrutmen yang terhubung ke lamaran",
+  "Readable company, title, date, and time context": "Konteks perusahaan, posisi, tanggal, dan waktu yang mudah dibaca",
+  "Stable visual identity for each application": "Identitas visual yang konsisten untuk setiap lamaran",
+  "Action management": "Pengelolaan tindakan",
+  "Reminder creation": "Pembuatan reminder",
+  "How does a record become a concrete next step?": "Bagaimana data berubah menjadi tindakan berikutnya yang konkret?",
+  "A reminder can be created from the calendar or application context by selecting the related application, naming the action, and defining its date and time. The result is reflected throughout the workspace.": "Reminder dapat dibuat dari calendar atau konteks lamaran dengan memilih lamaran terkait, memberi nama tindakan, serta menentukan tanggal dan waktunya. Hasilnya tercermin di seluruh workspace.",
+  "Reminder linked to an existing application": "Reminder terhubung dengan lamaran yang sudah ada",
+  "Action title with date and time": "Judul tindakan dengan tanggal dan waktu",
+  "Upcoming-action visibility on Dashboard and Insights": "Visibilitas tindakan mendatang pada Dashboard dan Insights",
+  "Overdue and missing-action attention states": "Attention state untuk tindakan terlambat dan belum tersedia",
+  "Personal decision support": "Dukungan keputusan pribadi",
+  "Insights and analytics": "Insights dan analitik",
+  "What is working, and what should change?": "Apa yang berhasil dan apa yang perlu diubah?",
+  "Insights transforms application data into practical reflection. Users can review performance by period, understand pipeline health, compare opportunity sources, monitor weekly goals, and identify applications that need attention.": "Insights mengubah data lamaran menjadi refleksi praktis. Pengguna dapat meninjau performa berdasarkan periode, memahami kesehatan pipeline, membandingkan sumber peluang, memantau target mingguan, dan mengidentifikasi lamaran yang membutuhkan perhatian.",
+  "This week, This month, and All time filters": "Filter Minggu ini, Bulan ini, dan Semua waktu",
+  "Total, interview, offer, and response rates": "Total, interview, offer, dan response rate",
+  "Recently added applications and weekly goal": "Lamaran terbaru dan target mingguan",
+  "Pipeline, activity, source performance, upcoming actions, and needs attention": "Pipeline, aktivitas, performa sumber, tindakan mendatang, dan kebutuhan perhatian",
+  "Private supporting files": "File pendukung pribadi",
+  "Document management": "Pengelolaan dokumen",
+  "How are CVs and cover letters kept with the right application?": "Bagaimana CV dan surat lamaran disimpan bersama lamaran yang tepat?",
+  "Users can upload, download, and replace the CV or cover letter associated with an application. Replacement is handled safely: the new file succeeds first, then the previous object is removed automatically.": "Pengguna dapat mengunggah, mengunduh, dan mengganti CV atau surat lamaran yang terkait dengan sebuah lamaran. Penggantian dilakukan secara aman: file baru harus berhasil terlebih dahulu, kemudian file lama dihapus otomatis.",
+  "CV and cover-letter upload": "Unggah CV dan surat lamaran",
+  "Authorized download from private storage": "Unduhan terotorisasi dari private storage",
+  "PDF, DOC, and DOCX support up to 5 MB": "Dukungan PDF, DOC, dan DOCX hingga 5 MB",
+  "Automatic old-file cleanup after successful replacement": "Penghapusan otomatis file lama setelah penggantian berhasil",
+  "Personal workspace access": "Akses workspace pribadi",
+  "Authentication and account protection": "Autentikasi dan perlindungan akun",
+  "How does each user reach only their own workspace?": "Bagaimana setiap pengguna hanya mengakses workspace miliknya?",
+  "LAMARIN supports email credentials and Google OAuth, with protected application routes and password recovery. Authentication establishes the account identity used to scope records, storage folders, and document access.": "LAMARIN mendukung kredensial email dan Google OAuth, dilengkapi protected route dan pemulihan kata sandi. Autentikasi menetapkan identitas akun yang digunakan untuk membatasi data, folder storage, dan akses dokumen.",
+  "Email registration and login": "Registrasi dan login email",
+  "Google OAuth authentication": "Autentikasi Google OAuth",
+  "Forgot-password and reset-password flow": "Alur lupa dan reset kata sandi",
+  "Logout and protected personal routes": "Logout dan protected route pribadi",
+  "Low-friction product exploration": "Eksplorasi produk tanpa hambatan",
+  "Demo mode": "Mode demo",
+  "How can visitors understand the product before creating an account?": "Bagaimana pengunjung memahami produk sebelum membuat akun?",
+  "Demo mode exposes the core product experience with temporary sample data. It allows visitors and recruiters to explore the workflow without mixing demonstration records with a real user account.": "Mode demo menampilkan pengalaman inti produk menggunakan data contoh sementara. Pengunjung dan rekruter dapat menjelajahi alur tanpa mencampurkan data demonstrasi dengan akun pengguna nyata.",
+  "Temporary demo data": "Data demo sementara",
+  "Immediate access to the product workflow": "Akses langsung ke alur produk",
+  "Clear separation from persistent personal accounts": "Pemisahan jelas dari akun pribadi permanen",
+  "Useful for product evaluation and portfolio review": "Berguna untuk evaluasi produk dan review portofolio",
+  "Dashboard overview": "Ringkasan dashboard",
+  "Application detail": "Detail lamaran",
+  "Kanban application board": "Board Kanban lamaran",
+  "Recruitment calendar": "Kalender rekrutmen",
+  "Create reminder": "Buat reminder",
+  "Personal insights": "Insights pribadi",
+  "Private document management": "Pengelolaan dokumen pribadi",
+  "Account access": "Akses akun",
+  "Temporary demo workspace": "Workspace demo sementara",
+  "Light appearance": "Tampilan terang",
+  "Dark appearance": "Tampilan gelap",
+  "Responsive website": "Website responsif",
+  "Click outside or press Esc to close": "Klik di luar atau tekan Esc untuk menutup",
+  "Click to fullscreen": "Klik untuk layar penuh",
+  "Desktop web · Click to expand": "Web desktop · Klik untuk memperbesar",
+  "Add the": "Tambahkan",
+  "screenshot": "screenshot",
+  "Close fullscreen preview": "Tutup preview layar penuh",
+  "Fullscreen preview": "Preview layar penuh",
+  "Open fullscreen": "Buka layar penuh",
+  "Scroll to LAMARIN project overview": "Gulir ke ringkasan proyek LAMARIN"
+};
+
+function translateCopy(value: string, language: Language): string {
+  return language === "id" ? INDONESIAN_COPY[value] ?? value : value;
+}
+
+type LanguageContextValue = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  tr: (value: string) => string;
+};
+
+const LanguageContext = createContext<LanguageContextValue | null>(null);
+
+function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    return {
+      language: "en" as Language,
+      setLanguage: () => undefined,
+      tr: (value: string) => value,
+    };
+  }
+  return context;
+}
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -454,8 +744,40 @@ const QA_ROWS = [
 ];
 
 function LamarinCaseStudy() {
+  const [language, setLanguageState] = useState<Language>("en");
+
+  useEffect(() => {
+    const savedLanguage = window.localStorage.getItem("lamarin-language");
+    const nextLanguage: Language = savedLanguage === "id" ? "id" : "en";
+    setLanguageState(nextLanguage);
+    document.documentElement.lang = nextLanguage;
+  }, []);
+
+  const languageValue = useMemo(
+    () => ({
+      language,
+      setLanguage: (nextLanguage: Language) => {
+        setLanguageState(nextLanguage);
+        window.localStorage.setItem("lamarin-language", nextLanguage);
+        document.documentElement.lang = nextLanguage;
+      },
+      tr: (value: string) => translateCopy(value, language),
+    }),
+    [language],
+  );
+
+  return (
+    <LanguageContext.Provider value={languageValue}>
+      <LamarinCaseStudyContent />
+    </LanguageContext.Provider>
+  );
+}
+
+function LamarinCaseStudyContent() {
   const prefersReducedMotion = useReducedMotion();
   const [activeSection, setActiveSection] = useState("overview");
+  const { isDark } = useTheme();
+  const { language, setLanguage, tr } = useLanguage();
 
   const { scrollYProgress } = useScroll();
   const progressScale = useSpring(scrollYProgress, {
@@ -489,49 +811,91 @@ function LamarinCaseStudy() {
   }, []);
 
   return (
-    <div className="relative overflow-clip bg-bg text-text-primary">
+    <div className={`relative overflow-clip bg-bg text-text-primary ${isDark ? "" : "bg-white text-slate-950"}`}>
       <motion.div
         aria-hidden="true"
         style={{ scaleX: progressScale }}
-        className="fixed inset-x-0 top-0 z-[100] h-[2px] origin-left bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"
+        className={`fixed inset-x-0 top-0 z-[100] h-[2px] origin-left ${isDark ? "bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400" : "bg-indigo-950"}`}
       />
 
-      <Hero prefersReducedMotion={Boolean(prefersReducedMotion)} />
-
-      <header className="sticky top-0 z-[80] border-b border-stroke bg-bg/84 px-4 py-3 backdrop-blur-xl md:px-7">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4">
+      <header className="fixed inset-x-0 top-0 z-[90] px-4 pt-4 md:px-7 md:pt-6">
+        <div
+          className={`mx-auto flex max-w-[1400px] items-center justify-between gap-3 rounded-full border px-3 py-2 backdrop-blur-2xl md:px-4 ${
+            isDark
+              ? "border-white/10 bg-black/48 shadow-[0_16px_58px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]"
+              : "border-white/80 bg-white/[0.68] shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.96)]"
+          }`}
+        >
           <a
             href="/#work"
-            className="group inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs text-muted transition hover:bg-surface-elevated hover:text-text-primary"
+            className={`group inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs transition ${
+              isDark
+                ? "text-white/60 hover:bg-white/[0.07] hover:text-white"
+                : "text-slate-600 hover:bg-white/80 hover:text-slate-950"
+            }`}
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to projects
+            {tr("Back to projects")}
           </a>
 
-          <nav
-            className="hidden items-center gap-1 xl:flex"
-            aria-label="LAMARIN case-study sections"
-          >
+          <nav className="hidden items-center gap-1 xl:flex" aria-label={tr("LAMARIN case-study sections")}>
             {SECTIONS.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
                 className={`rounded-full px-3 py-2 text-[11px] transition ${
                   activeSection === section.id
-                    ? "bg-indigo-500/10 text-indigo-500"
-                    : "text-muted hover:bg-surface-elevated hover:text-text-primary"
+                    ? isDark
+                      ? "bg-indigo-400/15 text-indigo-200"
+                      : "bg-indigo-950 text-white"
+                    : isDark
+                      ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
+                      : "text-slate-500 hover:bg-white/75 hover:text-slate-950"
                 }`}
               >
-                {section.label}
+                {tr(section.label)}
               </a>
             ))}
           </nav>
 
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <div
+              className={`flex items-center rounded-full border p-1 backdrop-blur-xl ${
+                isDark ? "border-white/10 bg-white/[0.04]" : "border-white/80 bg-white/[0.48]"
+              }`}
+              aria-label={tr("Choose language")}
+            >
+              {(["en", "id"] as Language[]).map((option) => {
+                const isActive = language === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setLanguage(option)}
+                    aria-pressed={isActive}
+                    className={`rounded-full px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] transition ${
+                      isActive
+                        ? isDark
+                          ? "bg-white text-black"
+                          : "bg-slate-950 text-white"
+                        : isDark
+                          ? "text-white/45 hover:text-white"
+                          : "text-slate-500 hover:text-slate-950"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
-      <main>
+      <Hero prefersReducedMotion={Boolean(prefersReducedMotion)} />
+
+      <main className={isDark ? "" : "bg-white text-slate-950 [&_.text-muted]:text-slate-600 [&_.text-text-secondary]:text-slate-700 [&_.text-text-primary]:text-slate-950 [&_.border-stroke]:border-slate-200 [&_.bg-surface]:bg-white [&_.bg-surface-elevated]:bg-slate-50 [&_.text-indigo-500]:text-indigo-950 [&_.bg-indigo-500\/10]:bg-indigo-950/[0.05] [&_.text-emerald-500]:text-emerald-700 [&_.bg-emerald-500\/10]:bg-emerald-50"}>
         <section
           id="overview"
           className="scroll-mt-28 px-6 py-24 md:px-10 md:py-32"
@@ -542,24 +906,17 @@ function LamarinCaseStudy() {
                 <div>
                   <SectionMarker number="00" label="Project overview" />
                   <h2 className="mt-7 text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                    What exactly is LAMARIN?
+                    {tr("What exactly is LAMARIN?")}
                   </h2>
                 </div>
 
                 <div>
                   <p className="text-xl leading-9 text-text-secondary md:text-3xl md:leading-[1.35]">
-                    LAMARIN is a private job-application management website for
-                    people handling multiple recruitment processes at the same
-                    time.
+                    {tr("LAMARIN is a private job-application management website for people handling multiple recruitment processes at the same time.")}
                   </p>
 
                   <p className="mt-7 max-w-3xl text-sm leading-7 text-muted md:text-base md:leading-8">
-                    It connects vacancy capture, application records, Kanban
-                    tracking, recruitment planning, personal analytics, CVs,
-                    and cover letters in one account-based workspace. It is not
-                    a job marketplace and it is not an applicant-tracking
-                    system for recruiters. The product is built for the job
-                    seeker.
+                    {tr("It connects vacancy capture, application records, Kanban tracking, recruitment planning, personal analytics, CVs, and cover letters in one account-based workspace. It is not a job marketplace and it is not an applicant-tracking system for recruiters. The product is built for the job seeker.")}
                   </p>
 
                   <dl className="mt-10 grid gap-x-8 gap-y-7 border-t border-stroke pt-8 sm:grid-cols-2">
@@ -588,7 +945,7 @@ function LamarinCaseStudy() {
                 <div>
                   <SectionMarker number="ROLE" label="End-to-end ownership" />
                   <h3 className="mt-6 text-3xl leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
-                    One project viewed through every delivery discipline.
+                    {tr("One project viewed through every delivery discipline.")}
                   </h3>
                 </div>
 
@@ -599,10 +956,10 @@ function LamarinCaseStudy() {
                       className="grid gap-3 border-b border-stroke py-6 last:border-b-0 sm:grid-cols-[190px_minmax(0,1fr)]"
                     >
                       <h4 className="text-sm font-medium text-text-primary">
-                        {item.role}
+                        {tr(item.role)}
                       </h4>
                       <p className="text-sm leading-7 text-muted">
-                        {item.responsibility}
+                        {tr(item.responsibility)}
                       </p>
                     </div>
                   ))}
@@ -621,16 +978,12 @@ function LamarinCaseStudy() {
               <SectionMarker number="01" label="Product challenge" />
               <div className="mt-8 grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
                 <h2 className="max-w-xl text-4xl leading-[1.04] tracking-[-0.05em] text-text-primary md:text-6xl">
-                  The job search already feels like work. The tools make it
-                  harder.
+                  {tr("The job search already feels like work. The tools make it harder.")}
                 </h2>
 
                 <div>
                   <p className="text-lg leading-8 text-text-secondary md:text-xl md:leading-9">
-                    One application can involve a job portal, spreadsheet,
-                    inbox, calendar, notes app, and several document folders.
-                    As the pipeline grows, users lose a reliable view of where
-                    each opportunity stands and what should happen next.
+                    {tr("One application can involve a job portal, spreadsheet, inbox, calendar, notes app, and several document folders. As the pipeline grows, users lose a reliable view of where each opportunity stands and what should happen next.")}
                   </p>
 
                   <div className="mt-10 divide-y divide-stroke border-y border-stroke">
@@ -662,12 +1015,10 @@ function LamarinCaseStudy() {
             <Reveal delay={0.08}>
               <blockquote className="mt-20 border-l-2 border-indigo-500 pl-6 md:pl-9">
                 <p className="max-w-5xl text-2xl leading-[1.35] tracking-[-0.025em] text-text-primary md:text-4xl">
-                  “Active job seekers need one reliable workspace to understand
-                  where every application stands, what must happen next, and
-                  what their own job-search data is telling them.”
+                  {tr("“Active job seekers need one reliable workspace to understand where every application stands, what must happen next, and what their own job-search data is telling them.”")}
                 </p>
                 <footer className="mt-6 text-xs uppercase tracking-[0.22em] text-muted">
-                  Product problem statement
+                  {tr("Product problem statement")}
                 </footer>
               </blockquote>
             </Reveal>
@@ -683,15 +1034,12 @@ function LamarinCaseStudy() {
               <SectionMarker number="02" label="Product strategy" />
               <div className="mt-8 grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
                 <h2 className="max-w-xl text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                  One workflow: capture, track, plan, and learn.
+                  {tr("One workflow: capture, track, plan, and learn.")}
                 </h2>
 
                 <div>
                   <p className="text-lg leading-8 text-text-secondary md:text-xl md:leading-9">
-                    The product strategy was to reduce tool switching without
-                    turning LAMARIN into an oversized recruitment platform.
-                    Every core feature supports one of four decisions in the
-                    job seeker’s workflow.
+                    {tr("The product strategy was to reduce tool switching without turning LAMARIN into an oversized recruitment platform. Every core feature supports one of four decisions in the job seeker’s workflow.")}
                   </p>
 
                   <div className="mt-10 grid gap-y-6 border-y border-stroke py-7 sm:grid-cols-4 sm:gap-x-6">
@@ -705,8 +1053,8 @@ function LamarinCaseStudy() {
                         <span className="font-display text-lg italic text-indigo-500">
                           {number}
                         </span>
-                        <h3 className="mt-3 text-base text-text-primary">{title}</h3>
-                        <p className="mt-2 text-xs leading-6 text-muted">{text}</p>
+                        <h3 className="mt-3 text-base text-text-primary">{tr(title)}</h3>
+                        <p className="mt-2 text-xs leading-6 text-muted">{tr(text)}</p>
                       </div>
                     ))}
                   </div>
@@ -718,7 +1066,7 @@ function LamarinCaseStudy() {
               <div className="mt-24 grid gap-12 lg:grid-cols-2">
                 <div>
                   <p className="text-[9px] uppercase tracking-[0.26em] text-indigo-500">
-                    Included in the production scope
+                    {tr("Included in the production scope")}
                   </p>
                   <ul className="mt-6 divide-y divide-stroke border-y border-stroke">
                     {[
@@ -731,7 +1079,7 @@ function LamarinCaseStudy() {
                     ].map((item) => (
                       <li key={item} className="flex items-start gap-3 py-4 text-sm leading-7 text-text-secondary">
                         <Check className="mt-1 h-4 w-4 shrink-0 text-indigo-500" />
-                        {item}
+                        {tr(item)}
                       </li>
                     ))}
                   </ul>
@@ -739,7 +1087,7 @@ function LamarinCaseStudy() {
 
                 <div>
                   <p className="text-[9px] uppercase tracking-[0.26em] text-muted">
-                    Deliberately outside the MVP
+                    {tr("Deliberately outside the MVP")}
                   </p>
                   <ul className="mt-6 divide-y divide-stroke border-y border-stroke">
                     {[
@@ -751,7 +1099,7 @@ function LamarinCaseStudy() {
                       "Native mobile application and paid subscription",
                     ].map((item) => (
                       <li key={item} className="py-4 text-sm leading-7 text-muted">
-                        {item}
+                        {tr(item)}
                       </li>
                     ))}
                   </ul>
@@ -770,14 +1118,11 @@ function LamarinCaseStudy() {
               <SectionMarker number="03" label="Complete feature walkthrough" />
               <div className="mt-8 grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                 <h2 className="max-w-2xl text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                  Every feature shown in its real website context.
+                  {tr("Every feature shown in its real website context.")}
                 </h2>
 
                 <p className="max-w-2xl text-base leading-8 text-muted md:text-lg">
-                  The mockups below use desktop browser frames because LAMARIN
-                  is a responsive web application. Each section explains the
-                  user decision supported by the feature—not only what appears
-                  on the screen.
+                  {tr("The mockups below use desktop browser frames because LAMARIN is a responsive web application. Each section explains the user decision supported by the feature—not only what appears on the screen.")}
                 </p>
               </div>
             </Reveal>
@@ -798,13 +1143,10 @@ function LamarinCaseStudy() {
                   <div>
                     <SectionMarker number="11" label="Responsive experience" />
                     <h3 className="mt-6 text-3xl leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
-                      One website across viewport, theme, and account state.
+                      {tr("One website across viewport, theme, and account state.")}
                     </h3>
                     <p className="mt-6 text-sm leading-7 text-muted md:text-base md:leading-8">
-                      The interface adapts its navigation, content density, and
-                      interaction layout across desktop, tablet, and mobile
-                      widths. Light and dark themes preserve the same hierarchy,
-                      while Demo mode clearly identifies temporary data.
+                      {tr("The interface adapts its navigation, content density, and interaction layout across desktop, tablet, and mobile widths. Light and dark themes preserve the same hierarchy, while Demo mode clearly identifies temporary data.")}
                     </p>
                   </div>
 
@@ -831,7 +1173,7 @@ function LamarinCaseStudy() {
               <div className="mt-8 grid gap-12 lg:grid-cols-[0.76fr_1.24fr]">
                 <div>
                   <h2 className="max-w-xl text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                    Privacy enforced below the interface.
+                    {tr("Privacy enforced below the interface.")}
                   </h2>
 
                   <div className="mt-9 flex flex-wrap gap-2">
@@ -849,7 +1191,7 @@ function LamarinCaseStudy() {
                         key={item}
                         className="rounded-full border border-stroke px-3.5 py-2 text-xs text-muted"
                       >
-                        {item}
+                        {tr(item)}
                       </span>
                     ))}
                   </div>
@@ -857,16 +1199,11 @@ function LamarinCaseStudy() {
 
                 <div>
                   <p className="text-lg leading-8 text-text-secondary md:text-xl md:leading-9">
-                    LAMARIN stores private recruitment information and personal
-                    documents. Security therefore cannot depend on whether a
-                    button or route is hidden in the interface.
+                    {tr("LAMARIN stores private recruitment information and personal documents. Security therefore cannot depend on whether a button or route is hidden in the interface.")}
                   </p>
 
                   <p className="mt-6 text-sm leading-7 text-muted md:text-base md:leading-8">
-                    Account identity is checked through authentication,
-                    application records are protected with Row Level Security,
-                    and documents are stored in a private bucket under folders
-                    scoped to the user ID.
+                    {tr("Account identity is checked through authentication, application records are protected with Row Level Security, and documents are stored in a private bucket under folders scoped to the user ID.")}
                   </p>
                 </div>
               </div>
@@ -885,13 +1222,10 @@ function LamarinCaseStudy() {
                 <div>
                   <SectionMarker number="FILE" label="Safe replacement workflow" />
                   <h3 className="mt-6 text-3xl leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
-                    Replace safely. Clean up automatically.
+                    {tr("Replace safely. Clean up automatically.")}
                   </h3>
                   <p className="mt-6 text-sm leading-7 text-muted md:text-base md:leading-8">
-                    When a CV or cover letter is replaced, the new file is
-                    validated and uploaded first. Metadata is updated only after
-                    success, and the previous object is then removed so a failed
-                    replacement does not erase the user’s existing document.
+                    {tr("When a CV or cover letter is replaced, the new file is validated and uploaded first. Metadata is updated only after success, and the previous object is then removed so a failed replacement does not erase the user’s existing document.")}
                   </p>
                 </div>
 
@@ -911,7 +1245,7 @@ function LamarinCaseStudy() {
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <span className="text-sm leading-7 text-text-secondary">
-                        {item}
+                        {tr(item)}
                       </span>
                     </li>
                   ))}
@@ -930,15 +1264,11 @@ function LamarinCaseStudy() {
               <SectionMarker number="05" label="QA and release" />
               <div className="mt-8 grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
                 <h2 className="max-w-xl text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                  Tested as one complete user journey.
+                  {tr("Tested as one complete user journey.")}
                 </h2>
 
                 <p className="max-w-2xl text-base leading-8 text-muted md:text-lg">
-                  Validation covered the product from account access to
-                  production deployment. The objective was not merely to prove
-                  that individual controls respond, but that records, reminders,
-                  metrics, documents, and ownership remain correct across the
-                  complete workflow.
+                  {tr("Validation covered the product from account access to production deployment. The objective was not merely to prove that individual controls respond, but that records, reminders, metrics, documents, and ownership remain correct across the complete workflow.")}
                 </p>
               </div>
             </Reveal>
@@ -946,9 +1276,9 @@ function LamarinCaseStudy() {
             <Reveal delay={0.08}>
               <div className="mt-16 overflow-hidden border-y border-stroke">
                 <div className="hidden grid-cols-[0.75fr_1.8fr_0.35fr] gap-6 border-b border-stroke py-4 text-[9px] uppercase tracking-[0.24em] text-muted md:grid">
-                  <span>Area</span>
-                  <span>Validated scope</span>
-                  <span>Result</span>
+                  <span>{tr("Area")}</span>
+                  <span>{tr("Validated scope")}</span>
+                  <span>{tr("Result")}</span>
                 </div>
 
                 {QA_ROWS.map((row) => (
@@ -959,13 +1289,13 @@ function LamarinCaseStudy() {
                     <div className="flex items-center gap-3">
                       <TestTube2 className="h-4 w-4 text-indigo-500" />
                       <span className="text-sm font-medium text-text-primary">
-                        {row.area}
+                        {tr(row.area)}
                       </span>
                     </div>
-                    <p className="text-sm leading-7 text-muted">{row.scope}</p>
+                    <p className="text-sm leading-7 text-muted">{tr(row.scope)}</p>
                     <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-500">
                       <Check className="h-3.5 w-3.5" />
-                      {row.result}
+                      {tr(row.result)}
                     </span>
                   </div>
                 ))}
@@ -977,7 +1307,7 @@ function LamarinCaseStudy() {
                 <div>
                   <SectionMarker number="FLOW" label="Delivery process" />
                   <h3 className="mt-6 text-3xl leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
-                    From problem discovery to live release.
+                    {tr("From problem discovery to live release.")}
                   </h3>
                 </div>
 
@@ -991,14 +1321,14 @@ function LamarinCaseStudy() {
                         {step.number}
                       </span>
                       <p className="text-[9px] uppercase tracking-[0.2em] text-muted">
-                        {step.label}
+                        {tr(step.label)}
                       </p>
                       <div>
                         <h4 className="text-lg tracking-[-0.02em] text-text-primary">
-                          {step.title}
+                          {tr(step.title)}
                         </h4>
                         <p className="mt-3 text-sm leading-7 text-muted">
-                          {step.text}
+                          {tr(step.text)}
                         </p>
                       </div>
                     </article>
@@ -1018,16 +1348,12 @@ function LamarinCaseStudy() {
               <SectionMarker number="06" label="Outcome and reflection" />
               <div className="mt-8 grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
                 <h2 className="max-w-xl text-4xl leading-[1.03] tracking-[-0.05em] text-text-primary md:text-6xl">
-                  A functioning product, not a static portfolio concept.
+                  {tr("A functioning product, not a static portfolio concept.")}
                 </h2>
 
                 <div>
                   <p className="text-lg leading-8 text-text-secondary md:text-xl md:leading-9">
-                    LAMARIN was implemented, secured, tested, and deployed as a
-                    working website. Its strongest design decision is not a
-                    single screen—it is the consistency of one application
-                    record across capture, tracking, planning, analytics, and
-                    document workflows.
+                    {tr("LAMARIN was implemented, secured, tested, and deployed as a working website. Its strongest design decision is not a single screen—it is the consistency of one application record across capture, tracking, planning, analytics, and document workflows.")}
                   </p>
 
                   <div className="mt-10 divide-y divide-stroke border-y border-stroke">
@@ -1050,16 +1376,14 @@ function LamarinCaseStudy() {
 
             <Reveal delay={0.08}>
               <div className="relative mt-24 overflow-hidden border-y border-stroke py-16 text-center md:py-24">
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[680px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[120px]" />
+                <div className={`pointer-events-none absolute left-1/2 top-1/2 h-72 w-[680px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px] ${isDark ? "bg-indigo-500/10" : "bg-slate-200/70"}`} />
                 <div className="relative">
                   <Sparkles className="mx-auto h-6 w-6 text-indigo-500" />
                   <h3 className="mx-auto mt-7 max-w-4xl text-4xl leading-[1.04] tracking-[-0.05em] text-text-primary md:text-6xl">
-                    Explore the real product in its website environment.
+                    {tr("Explore the real product in its website environment.")}
                   </h3>
                   <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-muted md:text-base md:leading-8">
-                    Open the live deployment or enter Demo mode to review the
-                    complete responsive workflow without relying only on this
-                    case study.
+                    {tr("Open the live deployment or enter Demo mode to review the complete responsive workflow without relying only on this case study.")}
                   </p>
 
                   <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -1069,7 +1393,7 @@ function LamarinCaseStudy() {
                       rel="noopener noreferrer"
                       className="group inline-flex items-center gap-3 rounded-full bg-indigo-500 px-6 py-3.5 text-sm font-medium text-white transition hover:-translate-y-1 hover:bg-indigo-400"
                     >
-                      Open live LAMARIN
+                      {tr("Open live LAMARIN")}
                       <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
                     <a
@@ -1078,7 +1402,7 @@ function LamarinCaseStudy() {
                       rel="noopener noreferrer"
                       className="group inline-flex items-center gap-3 rounded-full border border-stroke px-6 py-3.5 text-sm text-text-secondary transition hover:-translate-y-1 hover:border-indigo-400/45 hover:text-text-primary"
                     >
-                      Open demo mode
+                      {tr("Open demo mode")}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </a>
                   </div>
@@ -1093,6 +1417,8 @@ function LamarinCaseStudy() {
 }
 
 function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
+  const { tr } = useLanguage();
+
   return (
     <section className="relative min-h-[100svh] overflow-hidden bg-black">
       <video
@@ -1123,7 +1449,7 @@ function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
           className="max-w-4xl"
         >
           <p className="text-[10px] uppercase tracking-[0.38em] text-indigo-100/70 md:text-xs">
-            Full-stack product · Responsive web application
+            {tr("Full-stack product · Responsive web application")}
           </p>
 
           <h1 className="mt-6 text-[clamp(3.25rem,7vw,6.5rem)] leading-[0.88] tracking-[-0.065em] text-white">
@@ -1131,10 +1457,7 @@ function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-6 text-white/72 md:text-base md:leading-7">
-            A private job-application management website that helps job seekers
-            capture opportunities, track recruitment progress, plan next
-            actions, evaluate performance, and manage supporting documents in
-            one focused workspace.
+            {tr("A private job-application management website that helps job seekers capture opportunities, track recruitment progress, plan next actions, evaluate performance, and manage supporting documents in one focused workspace.")}
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -1144,7 +1467,7 @@ function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
               rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-medium text-[#0b0b18] transition hover:-translate-y-1 hover:bg-indigo-100"
             >
-              Open live product
+              {tr("Open live product")}
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
 
@@ -1152,7 +1475,7 @@ function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
               href="#overview"
               className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/16 bg-black/20 px-6 py-3.5 text-sm text-white/78 backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/10 hover:text-white"
             >
-              Read case study
+              {tr("Read case study")}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
           </div>
@@ -1161,11 +1484,11 @@ function Hero({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
 
       <a
         href="#overview"
-        aria-label="Scroll to LAMARIN project overview"
+        aria-label={tr("Scroll to LAMARIN project overview")}
         className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-3 text-white/55 transition hover:text-indigo-200"
       >
         <span className="text-[9px] uppercase tracking-[0.3em]">
-          Scroll to explore
+          {tr("Scroll to explore")}
         </span>
         <motion.span
           animate={prefersReducedMotion ? undefined : { y: [0, 5, 0] }}
@@ -1190,6 +1513,7 @@ function FeatureWalkthrough({
   reverse: boolean;
 }) {
   const Icon = feature.icon;
+  const { tr } = useLanguage();
 
   return (
     <Reveal>
@@ -1209,7 +1533,7 @@ function FeatureWalkthrough({
             </span>
             <span className="h-px w-8 bg-indigo-500/50" />
             <span className="text-[9px] uppercase tracking-[0.25em] text-muted">
-              {feature.category}
+              {tr(feature.category)}
             </span>
           </div>
 
@@ -1218,16 +1542,16 @@ function FeatureWalkthrough({
               <Icon className="h-5 w-5" />
             </div>
             <h3 className="text-3xl tracking-[-0.04em] text-text-primary md:text-5xl">
-              {feature.title}
+              {tr(feature.title)}
             </h3>
           </div>
 
           <p className="mt-5 text-sm font-medium text-indigo-500">
-            {feature.question}
+            {tr(feature.question)}
           </p>
 
           <p className="mt-5 text-sm leading-7 text-muted md:text-base md:leading-8">
-            {feature.description}
+            {tr(feature.description)}
           </p>
 
           <ul className="mt-7 space-y-3">
@@ -1235,7 +1559,7 @@ function FeatureWalkthrough({
               <li key={point} className="flex items-start gap-3">
                 <Check className="mt-1 h-4 w-4 shrink-0 text-indigo-500" />
                 <span className="text-sm leading-6 text-text-secondary">
-                  {point}
+                  {tr(point)}
                 </span>
               </li>
             ))}
@@ -1257,6 +1581,8 @@ function BrowserMockup({
   fallbackSrc?: string;
   size?: "medium" | "large";
 }) {
+  const { isDark } = useTheme();
+  const { tr } = useLanguage();
   const [imageSrc, setImageSrc] = useState(screen.src);
   const [failed, setFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -1313,7 +1639,7 @@ function BrowserMockup({
                 <motion.div
                   role="dialog"
                   aria-modal="true"
-                  aria-label={`${screen.label} fullscreen preview`}
+                  aria-label={`${tr(screen.label)} · ${tr("Fullscreen preview")}`}
                   initial={
                     prefersReducedMotion
                       ? { opacity: 0 }
@@ -1348,7 +1674,7 @@ function BrowserMockup({
                     <button
                       type="button"
                       onClick={() => setIsOpen(false)}
-                      aria-label="Close fullscreen preview"
+                      aria-label={tr("Close fullscreen preview")}
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-white/65 transition hover:rotate-90 hover:bg-white/10 hover:text-white"
                     >
                       <X className="h-5 w-5" />
@@ -1364,8 +1690,8 @@ function BrowserMockup({
                   </div>
 
                   <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 text-xs text-white/40 md:px-6">
-                    <span>{screen.label}</span>
-                    <span>Click outside or press Esc to close</span>
+                    <span>{tr(screen.label)}</span>
+                    <span>{tr("Click outside or press Esc to close")}</span>
                   </div>
                 </motion.div>
               </motion.div>
@@ -1379,7 +1705,7 @@ function BrowserMockup({
     <>
       <figure>
         <div
-          className={`group overflow-hidden rounded-[1.35rem] border border-stroke bg-surface shadow-[0_24px_70px_rgba(0,0,0,0.16)] ${
+          className={`group overflow-hidden rounded-[1.35rem] border border-stroke bg-surface ${isDark ? "shadow-[0_24px_70px_rgba(0,0,0,0.16)]" : "shadow-[0_18px_50px_rgba(15,23,42,0.08)]"} ${
             size === "large" ? "max-w-none" : ""
           }`}
         >
@@ -1408,7 +1734,7 @@ function BrowserMockup({
                     <ImageIcon className="h-6 w-6" />
                   </div>
                   <p className="mt-5 text-sm font-medium text-text-primary">
-                    Add the {screen.label} screenshot
+                    {tr("Add the")} {tr(screen.label)} {tr("screenshot")}
                   </p>
                   <p className="mt-2 break-all font-mono text-[10px] leading-5 text-muted">
                     {screen.src}
@@ -1419,7 +1745,7 @@ function BrowserMockup({
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                aria-label={`Open ${screen.label} fullscreen`}
+                aria-label={`${tr("Open fullscreen")} · ${tr(screen.label)}`}
                 className="relative block h-full w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
               >
                 <img
@@ -1436,7 +1762,7 @@ function BrowserMockup({
                 </span>
 
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-4 pb-4 pt-12 text-right text-[9px] uppercase tracking-[0.22em] text-white/70 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100">
-                  Click to fullscreen
+                  {tr("Click to fullscreen")}
                 </span>
               </button>
             )}
@@ -1444,9 +1770,9 @@ function BrowserMockup({
         </div>
 
         <figcaption className="mt-3 flex items-center justify-between gap-4 px-1">
-          <span className="text-xs text-muted">{screen.label}</span>
+          <span className="text-xs text-muted">{tr(screen.label)}</span>
           <span className="text-[9px] uppercase tracking-[0.2em] text-muted">
-            Desktop web · Click to expand
+            {tr("Desktop web · Click to expand")}
           </span>
         </figcaption>
       </figure>
@@ -1472,24 +1798,28 @@ function BrowserPair({
 }
 
 function SectionMarker({ number, label }: { number: string; label: string }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="flex items-center gap-3">
       <span className="font-display text-xl italic text-indigo-500">{number}</span>
       <span className="h-px w-8 bg-indigo-500/50" />
       <span className="text-[9px] uppercase tracking-[0.27em] text-muted">
-        {label}
+        {tr(label)}
       </span>
     </div>
   );
 }
 
 function MetaItem({ term, detail }: { term: string; detail: string }) {
+  const { tr } = useLanguage();
+
   return (
     <div>
       <dt className="text-[9px] uppercase tracking-[0.22em] text-muted">
-        {term}
+        {tr(term)}
       </dt>
-      <dd className="mt-2 text-sm leading-6 text-text-primary">{detail}</dd>
+      <dd className="mt-2 text-sm leading-6 text-text-primary">{tr(detail)}</dd>
     </div>
   );
 }
@@ -1503,12 +1833,14 @@ function ProblemRow({
   title: string;
   text: string;
 }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="grid gap-4 py-6 sm:grid-cols-[56px_minmax(0,1fr)]">
       <span className="font-display text-xl italic text-indigo-500">{number}</span>
       <div>
-        <h3 className="text-lg tracking-[-0.02em] text-text-primary">{title}</h3>
-        <p className="mt-2 text-sm leading-7 text-muted">{text}</p>
+        <h3 className="text-lg tracking-[-0.02em] text-text-primary">{tr(title)}</h3>
+        <p className="mt-2 text-sm leading-7 text-muted">{tr(text)}</p>
       </div>
     </div>
   );
@@ -1522,6 +1854,7 @@ function ArchitectureRow({
   index: number;
 }) {
   const Icon = layer.icon;
+  const { tr } = useLanguage();
 
   return (
     <article className="grid gap-5 border-b border-stroke py-7 last:border-b-0 md:grid-cols-[64px_140px_250px_minmax(0,1fr)] md:items-center">
@@ -1531,20 +1864,22 @@ function ArchitectureRow({
       <div className="flex items-center gap-3">
         <Icon className="h-4 w-4 text-indigo-500" />
         <span className="text-[9px] uppercase tracking-[0.2em] text-muted">
-          {layer.layer}
+          {tr(layer.layer)}
         </span>
       </div>
-      <h3 className="text-lg text-text-primary">{layer.title}</h3>
-      <p className="text-sm leading-7 text-muted">{layer.text}</p>
+      <h3 className="text-lg text-text-primary">{tr(layer.title)}</h3>
+      <p className="text-sm leading-7 text-muted">{tr(layer.text)}</p>
     </article>
   );
 }
 
 function ReflectionRow({ title, text }: { title: string; text: string }) {
+  const { tr } = useLanguage();
+
   return (
     <div className="grid gap-3 py-6 sm:grid-cols-[170px_minmax(0,1fr)]">
-      <h3 className="text-sm font-medium text-text-primary">{title}</h3>
-      <p className="text-sm leading-7 text-muted">{text}</p>
+      <h3 className="text-sm font-medium text-text-primary">{tr(title)}</h3>
+      <p className="text-sm leading-7 text-muted">{tr(text)}</p>
     </div>
   );
 }

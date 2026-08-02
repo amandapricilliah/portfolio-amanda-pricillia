@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
+import type { Bilingual } from "./LanguageProvider";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -22,8 +24,8 @@ type CertificateItem = {
   title: string;
   issuer: string;
   year: string;
-  category: string;
-  description: string;
+  category: Bilingual;
+  description: Bilingual;
   mark: string;
   icon: LucideIcon;
   images: string[];
@@ -35,9 +37,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "UI/UX Designer Certification",
     issuer: "Badan Nasional Sertifikasi Profesi",
     year: "2025",
-    category: "Professional Certification",
-    description:
-      "National professional competency certification in user interface and user experience design.",
+    category: { en: "Professional Certification", id: "Sertifikasi Profesional" },
+    description: {
+      en: "National professional competency certification in user interface and user experience design.",
+      id: "Sertifikasi kompetensi profesional nasional dalam bidang desain antarmuka dan pengalaman pengguna.",
+    },
     mark: "BNSP",
     icon: ShieldCheck,
     images: [
@@ -50,9 +54,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "Graphics Designer Certification",
     issuer: "Badan Nasional Sertifikasi Profesi",
     year: "2026",
-    category: "Professional Certification",
-    description:
-      "National professional competency certification covering graphic design and visual communication.",
+    category: { en: "Professional Certification", id: "Sertifikasi Profesional" },
+    description: {
+      en: "National professional competency certification covering graphic design and visual communication.",
+      id: "Sertifikasi kompetensi profesional nasional yang mencakup desain grafis dan komunikasi visual.",
+    },
     mark: "BNSP",
     icon: Award,
     images: [
@@ -64,9 +70,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "Becoming Professional UI/UX Designer",
     issuer: "Alterra Academy · MSIB Kemendikbudristek",
     year: "2024",
-    category: "Professional Development",
-    description:
-      "Completed an end-to-end UI/UX learning program covering research, design thinking, prototyping, and usability testing.",
+    category: { en: "Professional Development", id: "Pengembangan Profesional" },
+    description: {
+      en: "Completed an end-to-end UI/UX learning program covering research, design thinking, prototyping, and usability testing.",
+      id: "Menyelesaikan program pembelajaran UI/UX menyeluruh yang mencakup riset, design thinking, prototyping, dan usability testing.",
+    },
     mark: "ALT",
     icon: BadgeCheck,
     images: [
@@ -79,9 +87,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "UI/UX Designer Internship",
     issuer: "PT MNC Televisi Network · iNews TV",
     year: "2024",
-    category: "Internship Certificate",
-    description:
-      "UI/UX design internship focused on product features, user flows, prototyping, and front-end collaboration.",
+    category: { en: "Internship Certificate", id: "Sertifikat Magang" },
+    description: {
+      en: "UI/UX design internship focused on product features, user flows, prototyping, and front-end collaboration.",
+      id: "Magang desain UI/UX yang berfokus pada fitur produk, user flow, prototyping, dan kolaborasi front-end.",
+    },
     mark: "MNC",
     icon: BadgeCheck,
     images: [
@@ -93,9 +103,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "UI/UX Designer Apprenticeship",
     issuer: "Kementerian Ketenagakerjaan Republik Indonesia",
     year: "2026",
-    category: "Apprenticeship Certificate",
-    description:
-      "Participated in a professional apprenticeship program focused on practical UI/UX design experience.",
+    category: { en: "Apprenticeship Certificate", id: "Sertifikat Pemagangan" },
+    description: {
+      en: "Participated in a professional apprenticeship program focused on practical UI/UX design experience.",
+      id: "Mengikuti program pemagangan profesional yang berfokus pada pengalaman praktik desain UI/UX.",
+    },
     mark: "KMR",
     icon: ShieldCheck,
     images: [
@@ -107,9 +119,11 @@ const CERTIFICATES: CertificateItem[] = [
     title: "UI/UX Designer & Front-End Internship",
     issuer: "PT Max Samasta Group",
     year: "2024",
-    category: "Internship Certificate",
-    description:
-      "Completed a design and front-end internship by creating and implementing an employee attendance platform.",
+    category: { en: "Internship Certificate", id: "Sertifikat Magang" },
+    description: {
+      en: "Completed a design and front-end internship by creating and implementing an employee attendance platform.",
+      id: "Menyelesaikan magang desain dan front-end melalui perancangan serta implementasi platform absensi karyawan.",
+    },
     mark: "MS",
     icon: BadgeCheck,
     images: [
@@ -120,6 +134,7 @@ const CERTIFICATES: CertificateItem[] = [
 
 export function Certificates() {
   const { isDark } = useTheme();
+  const { copy } = useLanguage();
 
   const [selectedCertificate, setSelectedCertificate] =
     useState<CertificateItem | null>(null);
@@ -270,7 +285,7 @@ export function Certificates() {
                   onMouseDown={(event) => {
                     event.stopPropagation();
                   }}
-                  className={`relative my-auto w-full max-w-[1100px] overflow-hidden rounded-[2rem] border border-stroke bg-surface ${
+                  className={`homepage-modal relative my-auto w-full max-w-[1100px] overflow-hidden rounded-[2rem] border border-stroke bg-surface ${
                     isDark
                       ? "shadow-[0_30px_100px_rgba(0,0,0,0.85),0_0_60px_rgba(236,72,153,0.13),inset_0_1px_0_rgba(255,255,255,0.1)]"
                       : "shadow-[0_30px_100px_rgba(50,30,42,0.28),0_0_60px_rgba(236,72,153,0.12),inset_0_1px_0_rgba(255,255,255,0.95)]"
@@ -279,12 +294,12 @@ export function Certificates() {
                   {/* Modal glow */}
                   <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-pink-500/[0.13] blur-[110px]"
+                    className="homepage-ambient pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-pink-500/[0.13] blur-[110px]"
                   />
 
                   <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -bottom-40 -left-32 h-80 w-80 rounded-full bg-fuchsia-500/[0.09] blur-[120px]"
+                    className="homepage-ambient pointer-events-none absolute -bottom-40 -left-32 h-80 w-80 rounded-full bg-fuchsia-500/[0.09] blur-[120px]"
                   />
 
                   {/* Header popup */}
@@ -297,7 +312,7 @@ export function Certificates() {
                             : "text-pink-700/70"
                         }`}
                       >
-                        Certificate Preview
+                        {copy({ en: "Certificate Preview", id: "Pratinjau Sertifikat" })}
                       </p>
 
                       <h3 className="text-xl font-medium leading-tight text-text-primary md:text-2xl">
@@ -313,7 +328,7 @@ export function Certificates() {
                     <button
                       type="button"
                       onClick={closeCertificate}
-                      aria-label="Close certificate"
+                      aria-label={copy({ en: "Close certificate", id: "Tutup sertifikat" })}
                       className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stroke bg-surface-elevated text-muted transition duration-300 hover:rotate-90 hover:border-pink-400/40 hover:bg-pink-500/10 hover:text-text-primary"
                     >
                       <X className="h-5 w-5" />
@@ -380,7 +395,7 @@ export function Certificates() {
                             onClick={
                               showPreviousImage
                             }
-                            aria-label="Previous certificate image"
+                            aria-label={copy({ en: "Previous certificate image", id: "Gambar sertifikat sebelumnya" })}
                             className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.16] bg-black/60 text-white/75 shadow-xl backdrop-blur-md transition duration-300 hover:scale-105 hover:border-pink-300/50 hover:bg-pink-500/25 hover:text-white md:left-5 md:h-12 md:w-12"
                           >
                             <ChevronLeft className="h-5 w-5" />
@@ -389,7 +404,7 @@ export function Certificates() {
                           <button
                             type="button"
                             onClick={showNextImage}
-                            aria-label="Next certificate image"
+                            aria-label={copy({ en: "Next certificate image", id: "Gambar sertifikat berikutnya" })}
                             className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.16] bg-black/60 text-white/75 shadow-xl backdrop-blur-md transition duration-300 hover:scale-105 hover:border-pink-300/50 hover:bg-pink-500/25 hover:text-white md:right-5 md:h-12 md:w-12"
                           >
                             <ChevronRight className="h-5 w-5" />
@@ -402,14 +417,14 @@ export function Certificates() {
                     <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                       <div>
                         <p className="text-sm text-text-secondary">
-                          {
-                            selectedCertificate.category
-                          }
+                          {copy(selectedCertificate.category)}
                         </p>
 
                         <p className="mt-1 text-xs text-muted">
-                          Click outside or press Esc to
-                          close
+                          {copy({
+                            en: "Click outside or press Esc to close",
+                            id: "Klik area luar atau tekan Esc untuk menutup",
+                          })}
                         </p>
                       </div>
 
@@ -493,12 +508,12 @@ export function Certificates() {
         {/* Ambient background glow */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -left-52 top-[12%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
+          className="homepage-ambient pointer-events-none absolute -left-52 top-[12%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
         />
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-52 bottom-[5%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.08] blur-[160px]"
+          className="homepage-ambient pointer-events-none absolute -right-52 bottom-[5%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.08] blur-[160px]"
         />
 
         <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
@@ -526,7 +541,7 @@ export function Certificates() {
               <span className="h-px w-8 bg-stroke" />
 
               <span className="text-xs uppercase tracking-[0.3em] text-muted">
-                Certificates
+                {copy({ en: "Certificates", id: "Sertifikat" })}
               </span>
 
               <span className="h-px flex-1 bg-gradient-to-r from-pink-400/70 to-transparent" />
@@ -534,9 +549,9 @@ export function Certificates() {
 
             <div className="max-w-3xl">
               <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-text-primary sm:text-6xl md:text-7xl">
-                Credentials that
+                {copy({ en: "Credentials that", id: "Kredensial yang" })}
                 <br />
-                validate the{" "}
+                {copy({ en: "validate the", id: "memvalidasi" })}{" "}
                 <span
                   className={`font-display italic ${
                     isDark
@@ -544,15 +559,15 @@ export function Certificates() {
                       : "text-pink-600"
                   }`}
                 >
-                  craft.
+                  {copy({ en: "craft.", id: "keahlian." })}
                 </span>
               </h2>
 
               <p className="mt-6 max-w-xl text-sm leading-7 text-text-secondary md:text-base">
-                Certifications and professional programs
-                that reflect my continued growth across
-                design, development, and visual
-                communication.
+                {copy({
+                  en: "Certifications and professional programs that reflect my continued growth across design, development, and visual communication.",
+                  id: "Sertifikasi dan program profesional yang mencerminkan perkembangan saya dalam desain, pengembangan, dan komunikasi visual.",
+                })}
               </p>
             </div>
           </motion.div>
@@ -594,7 +609,7 @@ export function Certificates() {
                       once: true,
                       amount: 0.15,
                     }}
-                    aria-label={`View ${certificate.title}`}
+                    aria-label={copy({ en: `View ${certificate.title}`, id: `Lihat ${certificate.title}` })}
                     className={`group relative h-full min-h-[390px] overflow-hidden rounded-[1.75rem] border border-stroke bg-surface text-left transition-all duration-500 hover:border-pink-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/60 ${
                       isDark
                         ? "shadow-[0_22px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.09)] hover:shadow-[0_28px_75px_rgba(0,0,0,0.7),0_0_32px_rgba(236,72,153,0.13),inset_0_1px_0_rgba(255,255,255,0.12)]"
@@ -680,7 +695,7 @@ export function Certificates() {
                               : "text-pink-700/80"
                           }`}
                         >
-                          {certificate.category}
+                          {copy(certificate.category)}
                         </span>
 
                         <h3 className="mt-3 line-clamp-2 text-[1.3rem] font-medium leading-[1.2] tracking-tight text-text-primary">
@@ -692,7 +707,7 @@ export function Certificates() {
                         </p>
 
                         <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted transition-colors duration-300 group-hover:text-text-secondary">
-                          {certificate.description}
+                          {copy(certificate.description)}
                         </p>
                       </div>
 
@@ -713,17 +728,24 @@ export function Certificates() {
                             {certificate.year}
                           </div>
 
-                         <span
-  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[9px] font-medium uppercase tracking-[0.14em] transition-all duration-300 ${
-    isDark
-      ? "border-pink-300/25 bg-pink-500/10 text-pink-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] group-hover:border-pink-300/50 group-hover:bg-pink-500/20 group-hover:shadow-[0_0_20px_rgba(236,72,153,0.22),inset_0_1px_0_rgba(255,255,255,0.12)]"
-      : "border-pink-300/60 bg-pink-50 text-pink-700 shadow-[0_6px_18px_rgba(219,39,119,0.10),inset_0_1px_0_rgba(255,255,255,0.9)] group-hover:border-pink-400/80 group-hover:bg-pink-100 group-hover:shadow-[0_8px_24px_rgba(219,39,119,0.18)]"
-  }`}
->
-  <Eye className="h-4 w-4 shrink-0" />
+                        <span
+                          className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[9px] font-medium uppercase tracking-[0.14em] transition-all duration-300 ${
+                            isDark
+                              ? "border-white/15 bg-white/[0.04] text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] group-hover:border-pink-300/35 group-hover:bg-pink-500/[0.08] group-hover:text-pink-100"
+                              : "border-black/10 bg-white text-zinc-600 shadow-[0_4px_12px_rgba(17,17,17,0.05)] group-hover:border-pink-300/55 group-hover:bg-pink-50/55 group-hover:text-pink-700 group-hover:shadow-[0_5px_14px_rgba(17,17,17,0.07)]"
+                          }`}
+                        >
+                          <Eye
+                            className={`h-4 w-4 shrink-0 ${
+                              isDark ? "text-pink-300/80" : "text-pink-500/80"
+                            }`}
+                          />
 
-  View certificate
-</span>
+                          {copy({
+                            en: "View certificate",
+                            id: "Lihat sertifikat",
+                          })}
+                        </span>
                         </div>
                       </div>
                     </div>

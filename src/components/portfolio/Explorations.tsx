@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "./LanguageProvider";
 
 const ITEMS = [
   { img: "/images/graphics-design/greeting/feed-01.png", rot: -2 },
@@ -15,16 +16,18 @@ export function Explorations() {
   const colARef = useRef<HTMLDivElement>(null);
   const colBRef = useRef<HTMLDivElement>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const { copy } = useLanguage();
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
-    (async () => {
+
+    void (async () => {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
       if (!sectionRef.current || !contentRef.current) return;
 
-      const ctx = gsap.context(() => {
+      const context = gsap.context(() => {
         ScrollTrigger.create({
           trigger: sectionRef.current,
           start: "top top",
@@ -43,6 +46,7 @@ export function Explorations() {
             scrub: true,
           },
         });
+
         gsap.to(colBRef.current, {
           yPercent: 20,
           ease: "none",
@@ -55,8 +59,9 @@ export function Explorations() {
         });
       }, sectionRef);
 
-      cleanup = () => ctx.revert();
+      cleanup = () => context.revert();
     })();
+
     return () => cleanup?.();
   }, []);
 
@@ -64,73 +69,120 @@ export function Explorations() {
   const colB = ITEMS.slice(3);
 
   return (
-    <section ref={sectionRef} id="explorations" className="relative min-h-[300vh] bg-bg">
-      {/* Pinned center */}
+    <section
+      ref={sectionRef}
+      id="explorations"
+      className="relative min-h-[300vh] bg-bg"
+    >
       <div
         ref={contentRef}
-        className="h-screen w-full flex flex-col items-center justify-center text-center px-6 relative z-10"
+        className="relative z-10 flex h-screen w-full flex-col items-center justify-center px-6 text-center"
       >
-        <div className="flex items-center gap-3 mb-6">
-          <span className="w-8 h-px bg-stroke" />
-          <span className="text-xs text-muted uppercase tracking-[0.3em]">Graphics Designer</span>
-          <span className="w-8 h-px bg-stroke" />
+        <div className="mb-6 flex items-center gap-3">
+          <span className="h-px w-8 bg-stroke" />
+          <span className="text-xs uppercase tracking-[0.3em] text-muted">
+            {copy({ en: "Graphic Designer", id: "Desainer Grafis" })}
+          </span>
+          <span className="h-px w-8 bg-stroke" />
         </div>
-        <h2 className="text-5xl md:text-7xl text-text-primary tracking-tight">
-          Graphic <span className="font-display italic">Mockup</span>
+
+        <h2 className="text-5xl tracking-tight text-text-primary md:text-7xl">
+          {copy({ en: "Graphic", id: "Eksplorasi" })}{" "}
+          <span className="font-display italic">
+            {copy({ en: "Mockup", id: "Visual" })}
+          </span>
         </h2>
-        <p className="mt-4 text-sm md:text-base text-muted max-w-md">
-          A curated collection of branding, editorial, social media, poster, and promotional design explorations.
+
+        <p className="mt-4 max-w-md text-sm text-muted md:text-base">
+          {copy({
+            en: "A curated collection of branding, editorial, social media, poster, and promotional design explorations.",
+            id: "Kumpulan terkurasi berisi eksplorasi branding, editorial, media sosial, poster, dan desain promosi.",
+          })}
         </p>
+
         <a
-  href="/graphics-design"
-  className="group relative mt-8 inline-flex items-center gap-2 rounded-full text-sm px-5 py-3"
->
-          <span className="absolute inset-0 rounded-full border border-stroke bg-surface group-hover:opacity-0 transition-opacity" />
-          <span className="absolute -inset-[2px] rounded-full accent-gradient opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="absolute inset-[2px] rounded-full bg-bg opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="relative text-text-primary flex items-center gap-2">
-            Explore graphic works <span aria-hidden>↗</span>
+          href="/graphics-design"
+          className="group relative mt-8 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm"
+        >
+          <span className="absolute inset-0 rounded-full border border-stroke bg-surface transition-opacity group-hover:opacity-0" />
+          <span className="accent-gradient absolute -inset-[2px] rounded-full opacity-0 transition-opacity group-hover:opacity-100" />
+          <span className="absolute inset-[2px] rounded-full bg-bg opacity-0 transition-opacity group-hover:opacity-100" />
+          <span className="relative flex items-center gap-2 text-text-primary">
+            {copy({
+              en: "Explore graphic works",
+              id: "Lihat karya grafis",
+            })}{" "}
+            <span aria-hidden>↗</span>
           </span>
         </a>
       </div>
 
-      {/* Parallax columns */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-full grid grid-cols-2 gap-12 md:gap-40">
-          <div ref={colARef} className="flex flex-col gap-24 md:gap-40 pt-[10vh] items-end">
-            {colA.map((it, i) => (
+      <div className="pointer-events-none absolute inset-0 z-20">
+        <div className="mx-auto grid h-full max-w-[1400px] grid-cols-2 gap-12 px-6 md:gap-40 md:px-10">
+          <div
+            ref={colARef}
+            className="flex flex-col items-end gap-24 pt-[10vh] md:gap-40"
+          >
+            {colA.map((item, index) => (
               <button
-                key={i}
-                onClick={() => setLightbox(it.img)}
-                className="pointer-events-auto block aspect-square w-full max-w-[320px] rounded-3xl overflow-hidden border border-stroke bg-surface shadow-2xl shadow-black/40"
-                style={{ transform: `rotate(${it.rot}deg)` }}
+                key={item.img}
+                type="button"
+                onClick={() => setLightbox(item.img)}
+                aria-label={copy({
+                  en: `Open graphic exploration ${index + 1}`,
+                  id: `Buka eksplorasi grafis ${index + 1}`,
+                })}
+                className="pointer-events-auto block aspect-square w-full max-w-[320px] overflow-hidden rounded-3xl border border-stroke bg-surface shadow-2xl shadow-black/40"
+                style={{ transform: `rotate(${item.rot}deg)` }}
               >
-                <img src={it.img} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img
+                  src={item.img}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </button>
             ))}
           </div>
-          <div ref={colBRef} className="flex flex-col gap-24 md:gap-40 pt-[30vh] items-start">
-            {colB.map((it, i) => (
+
+          <div
+            ref={colBRef}
+            className="flex flex-col items-start gap-24 pt-[30vh] md:gap-40"
+          >
+            {colB.map((item, index) => (
               <button
-                key={i}
-                onClick={() => setLightbox(it.img)}
-                className="pointer-events-auto block aspect-square w-full max-w-[320px] rounded-3xl overflow-hidden border border-stroke bg-surface shadow-2xl shadow-black/40"
-                style={{ transform: `rotate(${it.rot}deg)` }}
+                key={item.img}
+                type="button"
+                onClick={() => setLightbox(item.img)}
+                aria-label={copy({
+                  en: `Open graphic exploration ${index + 4}`,
+                  id: `Buka eksplorasi grafis ${index + 4}`,
+                })}
+                className="pointer-events-auto block aspect-square w-full max-w-[320px] overflow-hidden rounded-3xl border border-stroke bg-surface shadow-2xl shadow-black/40"
+                style={{ transform: `rotate(${item.rot}deg)` }}
               >
-                <img src={it.img} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img
+                  src={item.img}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Lightbox */}
       {lightbox && (
         <div
           onClick={() => setLightbox(null)}
-          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 cursor-zoom-out"
+          className="fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-black/90 p-6 backdrop-blur-md"
         >
-          <img src={lightbox} alt="" className="max-w-full max-h-full rounded-2xl" />
+          <img
+            src={lightbox}
+            alt=""
+            className="max-h-full max-w-full rounded-2xl"
+          />
         </div>
       )}
     </section>

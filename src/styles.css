@@ -105,29 +105,65 @@ html[data-theme="dark"] {
  * Dibuat off-white, bukan putih polos,
  * supaya tetap terasa premium dan tidak menyilaukan.
  */
+/*
+ * LIGHT MODE
+ *
+ * Putih bersih dan netral tanpa semburat ungu.
+ */
 html[data-theme="light"] {
-  --theme-bg: #f7f4f6;
-  --theme-surface: rgba(255, 255, 255, 0.86);
-  --theme-surface-elevated: #ffffff;
+  --theme-bg: #ffffff;
+  --theme-surface: #ffffff;
+  --theme-surface-elevated: #f7f7f8;
 
-  --theme-text-primary: #191518;
-  --theme-text-secondary: #51494e;
-  --theme-muted: #766c72;
+  --theme-text-primary: #111111;
+  --theme-text-secondary: #3f3f46;
+  --theme-muted: #71717a;
 
-  --theme-stroke: rgba(44, 32, 39, 0.14);
-  --theme-accent: #191518;
+  --theme-stroke: rgba(17, 17, 17, 0.12);
+  --theme-accent: #111111;
 
   /*
-   * Versi light untuk variabel lama.
+   * Variabel lama versi light mode.
+   * Dibuat netral tanpa hue pink atau ungu.
    */
-  --bg: 330 14% 96%;
+  --bg: 0 0% 100%;
   --surface: 0 0% 100%;
-  --text: 330 8% 9%;
-  --muted: 330 5% 44%;
-  --stroke: 330 12% 82%;
-  --accent: 330 8% 9%;
+  --text: 0 0% 7%;
+  --muted: 0 0% 45%;
+  --stroke: 0 0% 88%;
+  --accent: 0 0% 7%;
 
   color-scheme: light;
+}
+
+/* Bersihkan background berwarna khusus light mode */
+html[data-theme="light"] body,
+html[data-theme="light"] #root,
+html[data-theme="light"] .homepage-shell,
+html[data-theme="light"] .homepage-shell main,
+html[data-theme="light"] .homepage-shell main > section {
+  background-color: #ffffff !important;
+}
+
+/* Hilangkan ambient glow ungu dan pink pada light mode */
+html[data-theme="light"] .homepage-ambient {
+  display: none !important;
+}
+
+/* Menghapus glow berwarna lain yang belum memakai homepage-ambient */
+html[data-theme="light"]
+  .homepage-shell
+  [class*="bg-pink-"][class*="blur-"],
+html[data-theme="light"]
+  .homepage-shell
+  [class*="bg-fuchsia-"][class*="blur-"],
+html[data-theme="light"]
+  .homepage-shell
+  [class*="bg-purple-"][class*="blur-"],
+html[data-theme="light"]
+  .homepage-shell
+  [class*="bg-rose-"][class*="blur-"] {
+  display: none !important;
 }
 
 /* Gradient lama tetap dipertahankan */

@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/client-websites")({
   component: ClientWebsitesCaseStudy,
@@ -441,55 +441,16 @@ const TONE_STYLES: Record<ClientProject["tone"], {
   },
 };
 
-type ClientLayout =
-  | "wide"
-  | "split"
-  | "split-reverse"
-  | "fan"
-  | "rail";
-
-const CLIENT_LAYOUTS: Record<string, ClientLayout> = {
-  "sany-perkasa": "wide",
-  "ocean-dental": "split",
-  equnix: "wide",
-  bpb: "wide",
-  "gmm-mobil": "wide",
-  nutrafor: "wide",
-  "stt-periago": "wide",
-  ekakarya: "wide",
-  "ghelsa-aqua-tech": "fan",
-  "diyamatrix-cubicle": "rail",
-  "jaya-cocoa": "rail",
-  "jaya-cocoa-international": "fan",
-  "abadi-makmur-cemerlang": "split-reverse",
-  "cubicle-toilet": "fan",
-  "sparta-server": "rail",
-  yuropowertune: "wide",
-  "gundul-jujur": "split",
-  "jasa-pindahan-adv": "wide",
-  "kusen-aluminium-jogja": "fan",
-  laptopgo: "rail",
-  "fajar-mulia-teknologi": "wide",
-  "pijat-panggilan-jakarta": "split",
-  "merveille-design-studio": "split-reverse",
-  "me-massage-indonesia": "wide",
-  kontika: "rail",
-  "megah-agung-sukses": "rail",
-  "smp-al-nur": "split",
-  "shirin-zein": "split-reverse",
-  "symphony-ac": "fan",
-  "raysan-abadi": "wide",
-  "klinik-sehati": "wide",
-};
-
 
 function ClientWebsitesCaseStudy() {
   const pageRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { isDark } = useTheme();
 
   const [lightbox, setLightbox] = useState<LightboxState>(null);
-  const [activeClient, setActiveClient] = useState(CLIENTS[0].id);
+  const [activeClientId, setActiveClientId] = useState(CLIENTS[0].id);
+  const [activeImageIndexes, setActiveImageIndexes] = useState<Record<string, number>>({});
 
   const { scrollYProgress } = useScroll({
     target: pageRef,
@@ -526,6 +487,44 @@ function ClientWebsitesCaseStudy() {
       .filter((client): client is ClientProject => Boolean(client));
   }, []);
 
+  const activeClientIndex = Math.max(
+    0,
+    CLIENTS.findIndex((client) => client.id === activeClientId),
+  );
+  const activeClient = CLIENTS[activeClientIndex] ?? CLIENTS[0];
+  const activeImageIndex = Math.min(
+    activeImageIndexes[activeClient.id] ?? 0,
+    activeClient.images.length - 1,
+  );
+  const activeImage = activeClient.images[activeImageIndex];
+  const activeTone = TONE_STYLES[activeClient.tone];
+
+  const selectClient = (clientId: string) => {
+    setActiveClientId(clientId);
+  };
+
+  const selectImage = (index: number) => {
+    setActiveImageIndexes((current) => ({
+      ...current,
+      [activeClient.id]: index,
+    }));
+  };
+
+  const moveClient = (direction: "prev" | "next") => {
+    const offset = direction === "next" ? 1 : -1;
+    const nextIndex =
+      (activeClientIndex + offset + CLIENTS.length) % CLIENTS.length;
+    setActiveClientId(CLIENTS[nextIndex].id);
+  };
+
+  const moveImage = (direction: "prev" | "next") => {
+    const offset = direction === "next" ? 1 : -1;
+    const nextIndex =
+      (activeImageIndex + offset + activeClient.images.length) %
+      activeClient.images.length;
+    selectImage(nextIndex);
+  };
+
   const moveLightbox = (direction: "prev" | "next") => {
     setLightbox((current) => {
       if (!current) return current;
@@ -539,31 +538,6 @@ function ClientWebsitesCaseStudy() {
       };
     });
   };
-
-  useEffect(() => {
-    const sections = CLIENTS.map((client) =>
-      document.getElementById(`client-${client.id}`),
-    ).filter((section): section is HTMLElement => Boolean(section));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible) {
-          setActiveClient(visible.target.id.replace("client-", ""));
-        }
-      },
-      {
-        rootMargin: "-28% 0px -58% 0px",
-        threshold: [0.05, 0.18, 0.42],
-      },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     if (!lightbox) return;
@@ -616,29 +590,18 @@ function ClientWebsitesCaseStudy() {
                   }
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   onMouseDown={(event) => event.stopPropagation()}
-                  className="relative flex max-h-[94vh] w-full max-w-[1500px] flex-col overflow-hidden rounded-[1.8rem] border border-white/15 bg-[#070707] shadow-[0_35px_140px_rgba(0,0,0,0.92)]"
+                  className="relative w-full max-w-[1600px]"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 md:px-7">
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-[0.3em] text-white/35">
-                        Client Website Archive
-                      </p>
-                      <p className="mt-1 truncate text-sm text-white/80 md:text-base">
-                        {lightbox.client.name} · {lightbox.client.images[lightbox.index].label}
-                      </p>
-                    </div>
+                  <button
+                    type="button"
+                    onClick={() => setLightbox(null)}
+                    aria-label="Close image preview"
+                    className="absolute right-1 top-1 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-black/65 text-white/70 backdrop-blur-md transition hover:rotate-90 hover:border-fuchsia-300/45 hover:text-white md:right-3 md:top-3"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => setLightbox(null)}
-                      aria-label="Close image preview"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-white/65 transition hover:rotate-90 hover:border-fuchsia-300/45 hover:text-white"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-
-                  <div className="relative min-h-0 flex-1 overflow-auto bg-black/60 p-3 md:p-6">
+                  <div className="relative px-2 pt-10 md:px-6 md:pt-4">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={lightbox.client.images[lightbox.index].src}
@@ -646,11 +609,11 @@ function ClientWebsitesCaseStudy() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -18 }}
                         transition={{ duration: 0.28 }}
-                        className="mx-auto flex min-h-full w-full items-start justify-center"
+                        className="mx-auto w-full"
                       >
-                        <ImageWithFallback
+                        <MacbookWebsitePreview
+                          client={lightbox.client}
                           image={lightbox.client.images[lightbox.index]}
-                          className="h-auto max-h-none w-full max-w-[1240px] object-contain"
                         />
                       </motion.div>
                     </AnimatePresence>
@@ -661,7 +624,7 @@ function ClientWebsitesCaseStudy() {
                           type="button"
                           onClick={() => moveLightbox("prev")}
                           aria-label="Previous website screen"
-                          className="fixed left-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:left-8"
+                          className="absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:left-3"
                         >
                           <ChevronLeft className="h-5 w-5" />
                         </button>
@@ -670,23 +633,21 @@ function ClientWebsitesCaseStudy() {
                           type="button"
                           onClick={() => moveLightbox("next")}
                           aria-label="Next website screen"
-                          className="fixed right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:right-8"
+                          className="absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 backdrop-blur-md transition hover:border-fuchsia-300/50 hover:bg-fuchsia-500/20 hover:text-white md:right-3"
                         >
                           <ChevronRight className="h-5 w-5" />
                         </button>
                       </>
                     )}
-                  </div>
 
-                  <div className="flex items-center justify-between border-t border-white/10 px-5 py-4 md:px-7">
-                    <span className="text-xs text-white/35">
-                      Scroll to inspect the complete page
-                    </span>
-                    <span className="font-display text-lg italic text-white/70">
-                      {String(lightbox.index + 1).padStart(2, "0")}
-                      <span className="mx-1.5 text-white/20">/</span>
-                      {String(lightbox.client.images.length).padStart(2, "0")}
-                    </span>
+                    <div className="mt-4 flex items-center justify-between px-1 text-[11px] text-white/35 md:px-3">
+                      <span>Scroll inside the browser window to inspect the full page</span>
+                      <span className="font-display text-base italic text-white/65">
+                        {String(lightbox.index + 1).padStart(2, "0")}
+                        <span className="mx-1.5 text-white/20">/</span>
+                        {String(lightbox.client.images.length).padStart(2, "0")}
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -728,6 +689,7 @@ function ClientWebsitesCaseStudy() {
         </div>
       </header>
 
+      {/* HERO — unchanged */}
       <section className="relative min-h-[100svh] overflow-hidden bg-[#050505]">
         <motion.div
           style={prefersReducedMotion ? undefined : { y: heroY, opacity: heroOpacity }}
@@ -794,67 +756,292 @@ function ClientWebsitesCaseStudy() {
         </a>
       </section>
 
-      <section id="archive" className="scroll-mt-28 px-5 py-24 md:px-9 md:py-32 lg:px-14">
-        <div className="mx-auto max-w-[1180px]">
+      <section
+        id="archive"
+        className="scroll-mt-28 px-5 py-20 md:px-9 md:py-28 lg:px-14"
+      >
+        <div className="mx-auto max-w-[1360px]">
           <Reveal>
-            <div className="grid gap-8 border-b border-stroke pb-12 xl:grid-cols-[0.88fr_1.12fr] xl:items-end">
+            <div className="grid gap-8 border-b border-stroke pb-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.34em] text-fuchsia-400">
-                  Selected client archive
+                <p className="text-[9px] uppercase tracking-[0.32em] text-fuchsia-400">
+                  Interactive visual index
                 </p>
-                <h2 className="mt-4 text-4xl leading-[0.98] tracking-[-0.055em] text-text-primary md:text-5xl xl:text-6xl">
-                  The websites are the story.
+                <h2 className="mt-4 max-w-xl text-3xl leading-[1.02] tracking-[-0.045em] text-text-primary md:text-5xl">
+                  One viewing stage. Thirty-one different visual systems.
                 </h2>
               </div>
 
-              <div className="xl:pb-2">
-                <p className="max-w-2xl text-sm leading-7 text-muted md:text-base md:leading-8">
-                  Each client is presented through a different visual rhythm—full-width browser frames,
-                  layered windows, split compositions, and animated image rails—so the archive stays expressive without hiding the work behind long explanations.
+              <div className="lg:pb-1">
+                <p className="max-w-2xl text-sm leading-7 text-muted md:text-base">
+                  The archive now behaves like a design index instead of a wall of cards. Choose a company, move through its pages, and open any screen at full size without leaving the stage.
                 </p>
-                <div className="mt-6 flex items-center gap-3 text-xs text-muted">
+                <div className="mt-5 flex items-center gap-3 text-xs text-muted">
                   <MousePointer2 className="h-4 w-4 text-fuchsia-400" />
-                  Click any mockup to inspect the full page.
+                  Select a client from the index, then choose a page from the filmstrip.
                 </div>
               </div>
             </div>
           </Reveal>
 
-          <div className="mt-12 space-y-16 md:mt-16 md:space-y-20">
-            {CLIENTS.map((client, index) => (
-              <ClientShowcase
-                key={client.id}
-                client={client}
-                index={index}
-                isActive={activeClient === client.id}
-                onOpen={(imageIndex) => setLightbox({ client, index: imageIndex })}
-              />
-            ))}
+          {/* Mobile client index */}
+          <div className="mt-8 flex gap-1 overflow-x-auto border-y border-stroke py-2 lg:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {CLIENTS.map((client, index) => {
+              const isActive = client.id === activeClient.id;
+              const tone = TONE_STYLES[client.tone];
+
+              return (
+                <button
+                  key={client.id}
+                  type="button"
+                  onClick={() => selectClient(client.id)}
+                  className={`shrink-0 border-r border-stroke px-4 py-3 text-left transition last:border-r-0 ${
+                    isActive ? "text-text-primary" : "text-muted"
+                  }`}
+                >
+                  <span className={`block text-[9px] uppercase tracking-[0.2em] ${isActive ? tone.text : "text-muted"}`}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="mt-1 block whitespace-nowrap text-sm">
+                    {client.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-10 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12">
+            {/* Desktop editorial index — no cards */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border-y border-stroke pr-3 [scrollbar-width:thin]">
+                {CLIENTS.map((client, index) => {
+                  const isActive = client.id === activeClient.id;
+                  const tone = TONE_STYLES[client.tone];
+
+                  return (
+                    <button
+                      key={client.id}
+                      type="button"
+                      onClick={() => selectClient(client.id)}
+                      className={`group grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-3 border-b border-stroke py-4 text-left transition last:border-b-0 ${
+                        isActive
+                          ? "text-text-primary"
+                          : "text-muted hover:text-text-primary"
+                      }`}
+                    >
+                      <span className={`font-display text-base italic ${isActive ? tone.text : "text-muted"}`}>
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-sm leading-5">{client.name}</span>
+                      <span className={`text-[9px] uppercase tracking-[0.18em] transition ${isActive ? tone.text : "text-muted group-hover:text-text-primary"}`}>
+                        {client.images.length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </aside>
+
+            {/* One large editorial stage */}
+            <div ref={stageRef} className="min-w-0">
+              <div className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-5">
+                <div>
+                  <p className={`text-[9px] uppercase tracking-[0.3em] ${activeTone.text}`}>
+                    {String(activeClientIndex + 1).padStart(2, "0")} · Client website
+                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.h3
+                      key={activeClient.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.24 }}
+                      className="mt-2 text-2xl tracking-[-0.035em] text-text-primary md:text-4xl"
+                    >
+                      {activeClient.name}
+                    </motion.h3>
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="mr-2 text-[10px] uppercase tracking-[0.18em] text-muted">
+                    {activeClient.images.length} {activeClient.images.length === 1 ? "screen" : "screens"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => moveClient("prev")}
+                    aria-label="Previous client"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke text-muted transition hover:border-fuchsia-400/40 hover:text-text-primary"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveClient("next")}
+                    aria-label="Next client"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke text-muted transition hover:border-fuchsia-400/40 hover:text-text-primary"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-6 overflow-hidden border-y border-stroke bg-surface">
+                <div className="flex h-10 items-center gap-2 border-b border-stroke bg-surface-elevated px-4">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+                  <span className="ml-3 truncate text-[10px] text-muted">
+                    {activeClient.name} · {activeImage.label}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setLightbox({ client: activeClient, index: activeImageIndex })}
+                  className="group relative block w-full cursor-zoom-in overflow-hidden bg-black/5 text-left"
+                  aria-label={`Open ${activeImage.alt}`}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeImage.src}
+                      initial={{ opacity: 0, x: 24, scale: 0.99 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -24, scale: 1.005 }}
+                      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <ImageWithFallback
+                        image={activeImage}
+                        className="aspect-[16/10] w-full object-cover object-top transition duration-700 group-hover:scale-[1.01]"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+
+                  <span className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white/80 opacity-0 backdrop-blur-md transition group-hover:opacity-100">
+                    <Maximize2 className="h-4 w-4" />
+                  </span>
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/68 via-black/8 to-transparent px-5 pb-5 pt-20 text-right text-[9px] uppercase tracking-[0.24em] text-white/75 opacity-0 transition group-hover:opacity-100">
+                    Open full page
+                  </span>
+                </button>
+
+                <div className="flex items-center justify-between gap-4 border-t border-stroke px-4 py-4 md:px-5">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm text-text-primary">{activeImage.label}</p>
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted">
+                      Page {String(activeImageIndex + 1).padStart(2, "0")} of {String(activeClient.images.length).padStart(2, "0")}
+                    </p>
+                  </div>
+
+                  {activeClient.images.length > 1 && (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => moveImage("prev")}
+                        aria-label="Previous page"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-stroke text-muted transition hover:text-text-primary"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveImage("next")}
+                        aria-label="Next page"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-stroke text-muted transition hover:text-text-primary"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact sheet: images are exposed, but not as rounded cards */}
+              {activeClient.images.length > 1 && (
+                <div className="mt-8 border-y border-stroke py-4">
+                  <div className="mb-4 flex items-center justify-between gap-4">
+                    <p className="text-[9px] uppercase tracking-[0.28em] text-muted">
+                      Page sequence
+                    </p>
+                    <p className="text-xs text-muted">
+                      Select a screen to replace the main preview.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:thin]">
+                    {activeClient.images.map((image, index) => {
+                      const isActive = activeImageIndex === index;
+
+                      return (
+                        <button
+                          key={image.src}
+                          type="button"
+                          onClick={() => selectImage(index)}
+                          className="group w-[190px] shrink-0 text-left md:w-[220px]"
+                        >
+                          <div
+                            className={`overflow-hidden border-b-2 bg-surface-elevated transition ${
+                              isActive
+                                ? activeTone.border
+                                : "border-transparent group-hover:border-stroke"
+                            }`}
+                          >
+                            <ImageWithFallback
+                              image={image}
+                              className={`aspect-[16/10] w-full object-cover object-top transition duration-500 ${
+                                isActive ? "opacity-100" : "opacity-55 group-hover:opacity-90"
+                              }`}
+                            />
+                          </div>
+                          <div className="mt-3 flex gap-3">
+                            <span className={`font-display text-sm italic ${isActive ? activeTone.text : "text-muted"}`}>
+                              {String(index + 1).padStart(2, "0")}
+                            </span>
+                            <span className={`line-clamp-2 text-xs leading-5 ${isActive ? "text-text-primary" : "text-muted"}`}>
+                              {image.label}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-stroke pt-5">
+                <p className="max-w-xl text-sm leading-7 text-muted">
+                  The company names and every original image path remain unchanged, so this layout can replace the current route without re-uploading or renaming any asset.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setLightbox({ client: activeClient, index: activeImageIndex })}
+                  className={`group inline-flex items-center gap-3 rounded-full border px-5 py-3 text-sm transition hover:-translate-y-0.5 ${activeTone.border} ${activeTone.soft} ${activeTone.text}`}
+                >
+                  View complete screen
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="px-5 pb-24 md:px-9 md:pb-36 lg:px-14">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="relative overflow-hidden rounded-[2.7rem] border border-stroke bg-surface px-6 py-16 text-center md:px-10 md:py-24">
-            <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-[650px] -translate-x-1/2 rounded-full bg-fuchsia-500/12 blur-[120px]" />
-            <div className="relative">
-              <Sparkles className="mx-auto h-7 w-7 text-fuchsia-400" />
-              <p className="mt-7 text-[9px] uppercase tracking-[0.34em] text-muted">
-                Visual archive complete
-              </p>
-              <h2 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.04] tracking-[-0.05em] text-text-primary md:text-6xl">
-                Different industries. Different visual systems. One evolving web-design practice.
-              </h2>
-              <a
-                href="/#work"
-                className="group mx-auto mt-10 inline-flex items-center gap-3 rounded-full border border-stroke bg-surface-elevated px-6 py-3.5 text-sm text-text-secondary transition hover:-translate-y-1 hover:border-fuchsia-400/45 hover:bg-fuchsia-500/10 hover:text-text-primary"
-              >
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to selected projects
-              </a>
-            </div>
-          </div>
+      <section className="px-5 pb-24 md:px-9 md:pb-32 lg:px-14">
+        <div className="mx-auto max-w-[1360px] border-y border-stroke py-14 text-center md:py-20">
+          <Sparkles className="mx-auto h-6 w-6 text-fuchsia-400" />
+          <p className="mt-6 text-[9px] uppercase tracking-[0.32em] text-muted">
+            Visual archive complete
+          </p>
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl leading-[1.06] tracking-[-0.04em] text-text-primary md:text-5xl">
+            Different industries, shown through one focused viewing system.
+          </h2>
+          <a
+            href="/#work"
+            className="group mx-auto mt-8 inline-flex items-center gap-3 rounded-full border border-stroke px-6 py-3.5 text-sm text-text-secondary transition hover:-translate-y-1 hover:border-fuchsia-400/45 hover:text-text-primary"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to selected projects
+          </a>
         </div>
       </section>
 
@@ -920,310 +1107,39 @@ function HeroCollage({ clients }: { clients: ClientProject[] }) {
   );
 }
 
-function ClientShowcase({
+function MacbookWebsitePreview({
   client,
-  index,
-  isActive,
-  onOpen,
+  image,
 }: {
   client: ClientProject;
-  index: number;
-  isActive: boolean;
-  onOpen: (imageIndex: number) => void;
+  image: ProjectImage;
 }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [55, -55]);
-  const tone = TONE_STYLES[client.tone];
-  const resolvedLayout = CLIENT_LAYOUTS[client.id] ?? "wide";
-
-  const previewImages = client.images.slice(
-    0,
-    Math.min(client.images.length, 3),
-  );
-
-  const disableSectionParallax =
-    prefersReducedMotion || resolvedLayout === "wide";
+  const address = `https://${client.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}.com`;
 
   return (
-    <motion.section
-      ref={sectionRef}
-      id={`client-${client.id}`}
-      className="scroll-mt-32"
-      style={{ "--client-glow": tone.glow } as CSSProperties}
-    >
-      <div className="mx-auto w-full max-w-[920px]">
-        <Reveal>
-          <div className="mb-5 flex w-full items-end justify-between gap-5 md:mb-6">
-            <div>
-              <p
-                className={`text-[9px] uppercase tracking-[0.3em] ${tone.text}`}
-              >
-                {String(index + 1).padStart(2, "0")} · Client website
-              </p>
-
-              <h3 className="mt-2 text-2xl tracking-[-0.04em] text-text-primary md:text-3xl">
-                {client.name}
-              </h3>
-            </div>
-
-            <div
-              className={`hidden shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-[11px] text-muted md:flex ${
-                isActive
-                  ? `${tone.border} ${tone.soft}`
-                  : "border-stroke bg-surface-elevated"
-              }`}
-            >
-              {client.images.length}{" "}
-              {client.images.length === 1 ? "screen" : "screens"}
-
-              <ArrowUpRight className={`h-4 w-4 ${tone.text}`} />
-            </div>
+    <div className="mx-auto w-full max-w-[1440px]">
+      <div className="overflow-hidden rounded-[2rem] border border-white/12 bg-[#07080c] shadow-[0_35px_140px_rgba(0,0,0,0.78)]">
+        <div className="flex items-center gap-3 border-b border-white/10 bg-[#111214] px-3 py-3 md:px-5">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
-        </Reveal>
+          <div className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] text-white/60 md:text-xs">
+            <span className="block truncate">{address}</span>
+          </div>
+        </div>
 
-        <motion.div style={disableSectionParallax ? undefined : { y }}>
-          {resolvedLayout === "wide" && (
-            <WideBrowserVisual
-              client={client}
-              image={previewImages[0]}
-              onOpen={() => onOpen(0)}
-            />
-          )}
-
-          {resolvedLayout === "split" && (
-            <SplitVisual
-              client={client}
-              images={previewImages}
-              reverse={false}
-              onOpen={onOpen}
-            />
-          )}
-
-          {resolvedLayout === "split-reverse" && (
-            <SplitVisual
-              client={client}
-              images={previewImages}
-              reverse
-              onOpen={onOpen}
-            />
-          )}
-
-          {resolvedLayout === "fan" && (
-            <FanVisual
-              client={client}
-              images={previewImages}
-              onOpen={onOpen}
-            />
-          )}
-
-          {resolvedLayout === "rail" && (
-            <RailVisual
-              client={client}
-              images={client.images}
-              onOpen={onOpen}
-            />
-          )}
-        </motion.div>
+        <div className="h-[66vh] overflow-y-auto bg-[#050505] md:h-[80vh]">
+          <ImageWithFallback
+            image={image}
+            className="h-auto w-full object-contain align-top"
+          />
+        </div>
       </div>
-    </motion.section>
-  );
-}
-
-function BrowserFrame({
-  image,
-  className = "",
-  imageClassName = "",
-  onClick,
-}: {
-  image: ProjectImage;
-  className?: string;
-  imageClassName?: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group overflow-hidden rounded-[1.3rem] border border-stroke bg-surface text-left shadow-[0_18px_58px_rgba(0,0,0,0.18)] transition duration-500 hover:-translate-y-1 hover:border-fuchsia-400/35 ${className}`}
-      aria-label={`Open ${image.alt}`}
-    >
-      <div className="flex h-9 items-center gap-2 border-b border-stroke bg-surface-elevated px-3.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-        <span className="ml-3 h-5 flex-1 rounded-full border border-stroke bg-surface/70" />
-      </div>
-      <div className={`relative overflow-hidden bg-black/5 ${imageClassName}`}>
-        <ImageWithFallback
-          image={image}
-          className="h-full w-full scale-[1.12] object-cover object-top transition duration-700 group-hover:scale-[1.17]"
-        />
-        <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white/75 opacity-0 backdrop-blur-md transition group-hover:opacity-100">
-          <Maximize2 className="h-4 w-4" />
-        </span>
-      </div>
-    </button>
-  );
-}
-
-function WideBrowserVisual({
-  client,
-  image,
-  onOpen,
-}: {
-  client: ClientProject;
-  image: ProjectImage;
-  onOpen: () => void;
-}) {
-  return (
-    <div className="relative">
-      <div
-        className="pointer-events-none absolute inset-x-[12%] -top-12 h-44 rounded-full blur-[85px]"
-        style={{ background: "var(--client-glow)" }}
-      />
-      <BrowserFrame
-        image={image}
-        onClick={onOpen}
-        className="relative mx-auto w-full max-w-full !translate-y-0 !rotate-0 transform-none hover:!translate-y-0"
-        imageClassName="h-[250px] md:h-[340px]"
-      />
-      {client.images.length > 1 && (
-        <p className="mx-auto mt-3 max-w-full text-right text-[11px] text-muted">
-          +{client.images.length - 1} additional screens in the gallery
-        </p>
-      )}
-    </div>
-  );
-}
-
-function SplitVisual({
-  client,
-  images,
-  reverse,
-  onOpen,
-}: {
-  client: ClientProject;
-  images: ProjectImage[];
-  reverse: boolean;
-  onOpen: (index: number) => void;
-}) {
-  const secondary = images[1] ?? images[0];
-  const tertiary = images[2] ?? secondary;
-
-  return (
-    <div
-      className={`mx-auto grid max-w-full gap-4 xl:grid-cols-[1.1fr_0.9fr] ${
-        reverse ? "xl:[&>*:first-child]:order-2" : ""
-      }`}
-    >
-      <BrowserFrame
-        image={images[0]}
-        onClick={() => onOpen(0)}
-        imageClassName="h-[250px] md:h-[350px]"
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-        <BrowserFrame
-          image={secondary}
-          onClick={() => onOpen(Math.min(1, client.images.length - 1))}
-          imageClassName="h-[150px] md:h-[165px]"
-        />
-        <BrowserFrame
-          image={tertiary}
-          onClick={() => onOpen(Math.min(2, client.images.length - 1))}
-          imageClassName="h-[150px] md:h-[165px]"
-        />
-      </div>
-    </div>
-  );
-}
-
-function FanVisual({
-  client,
-  images,
-  onOpen,
-}: {
-  client: ClientProject;
-  images: ProjectImage[];
-  onOpen: (index: number) => void;
-}) {
-  const arranged = [images[1] ?? images[0], images[0], images[2] ?? images[0]];
-
-  return (
-    <div className="relative mx-auto flex min-h-[340px] max-w-full items-center justify-center overflow-hidden rounded-[1.8rem] border border-stroke bg-surface p-4 md:min-h-[440px] md:p-7">
-      <div
-        className="pointer-events-none absolute h-[520px] w-[520px] rounded-full blur-[110px]"
-        style={{ background: "var(--client-glow)" }}
-      />
-      {arranged.map((image, arrangedIndex) => {
-        const rotations = [-7, 0, 7];
-        const positions = ["-translate-x-[28%] translate-y-8", "z-10", "translate-x-[28%] translate-y-8"];
-        const originalIndex = client.images.findIndex((item) => item.src === image.src);
-
-        return (
-          <motion.button
-            key={`${image.src}-${arrangedIndex}`}
-            type="button"
-            onClick={() => onOpen(Math.max(0, originalIndex))}
-            whileHover={{ y: -12, scale: 1.025, rotate: 0 }}
-            className={`absolute w-[52%] max-w-[480px] overflow-hidden rounded-[1.25rem] border border-stroke bg-surface shadow-[0_24px_70px_rgba(0,0,0,0.26)] ${positions[arrangedIndex]}`}
-            style={{ rotate: `${rotations[arrangedIndex]}deg` }}
-          >
-            <ImageWithFallback
-              image={image}
-              className="aspect-[16/10] w-full scale-[1.1] object-cover object-top"
-            />
-          </motion.button>
-        );
-      })}
-    </div>
-  );
-}
-
-function RailVisual({
-  client,
-  images,
-  onOpen,
-}: {
-  client: ClientProject;
-  images: ProjectImage[];
-  onOpen: (index: number) => void;
-}) {
-  const rail = images.length > 1 ? [...images, ...images] : images;
-
-  return (
-    <div className="mx-auto max-w-full overflow-hidden rounded-[1.8rem] border border-stroke bg-surface py-5 md:py-6">
-      <motion.div
-        className="flex w-max gap-4 px-4 md:gap-5 md:px-6"
-        animate={{ x: [0, images.length > 1 ? -900 : 0] }}
-        transition={{
-          duration: Math.max(18, images.length * 4),
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "linear",
-        }}
-      >
-        {rail.map((image, index) => (
-          <button
-            key={`${image.src}-${index}`}
-            type="button"
-            onClick={() => onOpen(index % client.images.length)}
-            className="group w-[64vw] max-w-[480px] shrink-0 overflow-hidden rounded-[1.25rem] border border-stroke bg-surface-elevated shadow-[0_20px_58px_rgba(0,0,0,0.18)]"
-          >
-            <ImageWithFallback
-              image={image}
-              className="aspect-[16/10] w-full scale-[1.12] object-cover object-top transition duration-700 group-hover:scale-[1.17]"
-            />
-          </button>
-        ))}
-      </motion.div>
     </div>
   );
 }
@@ -1244,10 +1160,10 @@ function ImageWithFallback({
   if (hasError) {
     return (
       <div
-        className={`flex items-center justify-center bg-gradient-to-br from-fuchsia-500/10 via-surface-elevated to-cyan-500/10 p-6 ${className}`}
+        className={`flex items-center justify-center bg-surface-elevated p-6 ${className}`}
       >
         <div className="max-w-sm text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-fuchsia-300/25 bg-fuchsia-500/10">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-stroke bg-surface">
             <ImageIcon className="h-6 w-6 text-fuchsia-400" />
           </div>
           <p className="mt-5 text-sm font-medium text-text-primary">

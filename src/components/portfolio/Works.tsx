@@ -7,6 +7,8 @@ import {
 import { useMemo, useState } from "react";
 
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
+import type { Bilingual } from "./LanguageProvider";
 
 type ProjectCategory = "Digital Product" | "Graphics Designer";
 
@@ -14,19 +16,21 @@ type Project = {
   id: string;
   title: string;
   category: ProjectCategory;
-  type: string;
-  description: string;
+  type: Bilingual;
+  description: Bilingual;
   thumbnail: string;
   tags: string[];
   href?: string;
 };
 
 const FILTERS: {
-  label: ProjectCategory;
+  value: ProjectCategory;
+  label: Bilingual;
   icon: typeof LayoutGrid;
 }[] = [
   {
-    label: "Digital Product",
+    value: "Digital Product",
+    label: { en: "Digital Product", id: "Produk Digital" },
     icon: LayoutGrid,
   },
 ];
@@ -37,10 +41,12 @@ const PROJECTS: Project[] = [
     id: "inews-byte",
     title: "iNews Byte",
     category: "Digital Product",
-    type: "News Portal · Short-Video Platform",
+    type: { en: "News Portal · Short-Video Platform", id: "Portal Berita · Platform Video Singkat" },
     href: "/inews-byte",
-    description:
-      "A short-form video news channel developed for the iNews portal using Agile Development, with YouTube integration, content management, and interactive features.",
+    description: {
+      en: "A short-form video news channel developed for the iNews portal using Agile Development, with YouTube integration, content management, and interactive features.",
+      id: "Kanal berita video singkat untuk portal iNews yang dikembangkan dengan Agile Development, integrasi YouTube, pengelolaan konten, dan fitur interaktif.",
+    },
     thumbnail: "/images/inews-byte/inews-byte-cover.png",
     tags: ["CodeIgniter 4", "PHP", "MySQL", "Agile"],
   },
@@ -48,10 +54,12 @@ const PROJECTS: Project[] = [
     id: "agriplant",
     title: "Agriplant",
     category: "Digital Product",
-    type: "Mobile App + Admin Website",
+    type: { en: "Mobile App + Admin Website", id: "Aplikasi Mobile + Website Admin" },
     href: "/agriplant",
-    description:
-      "A smart farming ecosystem consisting of a mobile application for users and a web-based administrative dashboard, designed through a complete design thinking process.",
+    description: {
+      en: "A smart farming ecosystem consisting of a mobile application for users and a web-based administrative dashboard, designed through a complete design thinking process.",
+      id: "Ekosistem smart farming yang terdiri dari aplikasi mobile untuk pengguna dan dashboard administrasi berbasis web, dirancang melalui proses design thinking yang lengkap.",
+    },
     thumbnail: "/images/agriplant/agriplant-mockup.png",
     tags: ["Smart Farming", "Mobile App", "Dashboard", "Design System"],
   },
@@ -59,10 +67,12 @@ const PROJECTS: Project[] = [
     id: "user-complaints",
     title: "User Complaints",
     category: "Digital Product",
-    type: "Web Platform · Full Design Thinking",
+    type: { en: "Web Platform · Full Design Thinking", id: "Platform Web · Design Thinking Menyeluruh" },
     href: "/user-complaints",
-    description:
-      "A complaint feature for the iNews digital platform, developed through user research, user flows, wireframes, interface exploration, and interactive prototyping.",
+    description: {
+      en: "A complaint feature for the iNews digital platform, developed through user research, user flows, wireframes, interface exploration, and interactive prototyping.",
+      id: "Fitur pengaduan untuk platform digital iNews yang dikembangkan melalui riset pengguna, user flow, wireframe, eksplorasi antarmuka, dan prototipe interaktif.",
+    },
     thumbnail: "/images/user-complaints/user-complaints-cover.png",
     tags: ["Web Design", "User Research", "User Flow", "Prototype"],
   },
@@ -70,10 +80,12 @@ const PROJECTS: Project[] = [
     id: "farmagym",
     title: "FarmaGym",
     category: "Digital Product",
-    type: "Mobile App · Full Design Thinking",
+    type: { en: "Mobile App · Full Design Thinking", id: "Aplikasi Mobile · Design Thinking Menyeluruh" },
     href: "/farmagym",
-    description:
-      "A fitness planning application developed through an end-to-end design thinking process, from user research and problem definition to prototyping and usability validation.",
+    description: {
+      en: "A fitness planning application developed through an end-to-end design thinking process, from user research and problem definition to prototyping and usability validation.",
+      id: "Aplikasi perencanaan kebugaran yang dikembangkan melalui proses design thinking menyeluruh, mulai dari riset pengguna dan perumusan masalah hingga prototipe dan validasi usability.",
+    },
     thumbnail: "/images/farmagym/farmagym_mockup.png",
     tags: ["Design Thinking", "Mobile App", "Research", "Prototype"],
   },
@@ -81,10 +93,12 @@ const PROJECTS: Project[] = [
     id: "lamarin",
     title: "LAMARIN",
     category: "Digital Product",
-    type: "Full-Stack SaaS · Product Strategy · UX · Engineering",
+    type: { en: "Full-Stack SaaS · Product Strategy · UX · Engineering", id: "SaaS Full-Stack · Strategi Produk · UX · Engineering" },
     href: "/lamarin",
-    description:
-      "An end-to-end job application management workspace combining Kanban tracking, calendar planning, personal analytics, secure document management, and account-based data privacy.",
+    description: {
+      en: "An end-to-end job application management workspace combining Kanban tracking, calendar planning, personal analytics, secure document management, and account-based data privacy.",
+      id: "Workspace pengelolaan lamaran kerja yang menggabungkan pelacakan Kanban, perencanaan kalender, analitik pribadi, manajemen dokumen aman, dan privasi data berbasis akun.",
+    },
     thumbnail: "/images/lamarin/lamarin.png",
     tags: ["Next.js", "TypeScript", "Supabase", "Product Design"],
   },
@@ -92,10 +106,12 @@ const PROJECTS: Project[] = [
     id: "client-website-mockups",
     title: "30+ Client Websites",
     category: "Digital Product",
-    type: "Website Mockups + Style Guides",
+    type: { en: "Website Mockups + Style Guides", id: "Mockup Website + Style Guide" },
     href: "/client-websites",
-    description:
-      "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
+    description: {
+      en: "A collection of 30 website concepts created for clients across different industries, presented through dynamic mockups and visual website showcases.",
+      id: "Kumpulan lebih dari 30 konsep website untuk klien dari berbagai industri yang disajikan melalui mockup dinamis dan showcase visual.",
+    },
     thumbnail: "/images/client-websites/client-mockups.png",
     tags: ["Web Design", "Style Guide", "Mockup", "Client Work"],
   },
@@ -103,10 +119,12 @@ const PROJECTS: Project[] = [
     id: "kiloin",
     title: "Kiloin",
     category: "Digital Product",
-    type: "Mobile App · Product & Business Documentation",
+    type: { en: "Mobile App · Product & Business Documentation", id: "Aplikasi Mobile · Dokumentasi Produk & Bisnis" },
     href: "/kiloin",
-    description:
-      "A recycling service application that connects waste pickup through Ko-Put with recycled-product shopping through Ko-Mart, supported by wireframes, a class diagram, and a complete business plan.",
+    description: {
+      en: "A recycling service application that connects waste pickup through Ko-Put with recycled-product shopping through Ko-Mart, supported by wireframes, a class diagram, and a complete business plan.",
+      id: "Aplikasi layanan daur ulang yang menghubungkan penjemputan sampah melalui Ko-Put dengan pembelian produk daur ulang melalui Ko-Mart, didukung wireframe, class diagram, dan business plan.",
+    },
     thumbnail: "/images/kiloin/Thumbnail.png",
     tags: ["Mobile App", "Recycling", "Class Diagram", "Business Plan"],
   },
@@ -114,10 +132,12 @@ const PROJECTS: Project[] = [
     id: "amr-farms",
     title: "AMR Farms",
     category: "Digital Product",
-    type: "Mobile Grocery App + Admin Dashboard",
+    type: { en: "Mobile Grocery App + Admin Dashboard", id: "Aplikasi Grocery Mobile + Dashboard Admin" },
     href: "/amr-farms",
-    description:
-      "A grocery-commerce concept featuring mobile shopping wireframes and an administrative dashboard for product categories, income data, and business reporting.",
+    description: {
+      en: "A grocery-commerce concept featuring mobile shopping wireframes and an administrative dashboard for product categories, income data, and business reporting.",
+      id: "Konsep grocery commerce yang mencakup wireframe belanja mobile dan dashboard administrasi untuk kategori produk, data pendapatan, serta laporan bisnis.",
+    },
     thumbnail: "/images/amr-farms/amr-farms-hero.png",
     tags: [
       "Mobile App",
@@ -135,6 +155,7 @@ export function Works() {
     useState<ProjectCategory>("Digital Product");
 
   const { isDark } = useTheme();
+  const { copy } = useLanguage();
 
   const filteredProjects = useMemo(
     () => PROJECTS.filter((project) => project.category === activeFilter),
@@ -149,12 +170,12 @@ export function Works() {
       {/* Ambient glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-52 top-[15%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
+        className="homepage-ambient pointer-events-none absolute -left-52 top-[15%] h-[34rem] w-[34rem] rounded-full bg-fuchsia-500/[0.07] blur-[150px]"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-52 bottom-[10%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.07] blur-[160px]"
+        className="homepage-ambient pointer-events-none absolute -right-52 bottom-[10%] h-[36rem] w-[36rem] rounded-full bg-pink-500/[0.07] blur-[160px]"
       />
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
@@ -181,7 +202,7 @@ export function Works() {
             <span className="h-px w-8 bg-stroke" />
 
             <span className="text-xs uppercase tracking-[0.3em] text-muted">
-              Selected Projects
+              {copy({ en: "Selected Projects", id: "Proyek Pilihan" })}
             </span>
 
             <span className="h-px flex-1 bg-gradient-to-r from-pink-400/70 to-transparent" />
@@ -190,23 +211,24 @@ export function Works() {
           <div className="grid gap-8 md:grid-cols-12 md:items-end">
             <div className="md:col-span-8">
               <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-text-primary sm:text-6xl md:text-7xl">
-                Ideas shaped into
+                {copy({ en: "Ideas shaped into", id: "Ide yang diwujudkan menjadi" })}
                 <br />
                 <span
                   className={`font-display italic ${
                     isDark ? "text-pink-200" : "text-pink-600"
                   }`}
                 >
-                  meaningful work.
+                  {copy({ en: "meaningful work.", id: "karya bermakna." })}
                 </span>
               </h2>
             </div>
 
             <div className="md:col-span-4">
               <p className="max-w-md text-sm leading-7 text-text-secondary md:text-base">
-                A multidisciplinary collection of interface design, web
-                development, branding, editorial, and visual communication
-                projects.
+                {copy({
+                  en: "A multidisciplinary collection of interface design, web development, branding, editorial, and visual communication projects.",
+                  id: "Kumpulan proyek multidisiplin yang mencakup desain antarmuka, pengembangan web, branding, editorial, dan komunikasi visual.",
+                })}
               </p>
 
               <div className="mt-5 flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
@@ -215,7 +237,7 @@ export function Works() {
                     isDark ? "text-pink-300" : "text-pink-600"
                   }`}
                 />
-                {filteredProjects.length} projects displayed
+                {filteredProjects.length} {copy({ en: "projects displayed", id: "proyek ditampilkan" })}
               </div>
             </div>
           </div>
@@ -250,14 +272,14 @@ export function Works() {
           >
             {FILTERS.map((filter) => {
               const Icon = filter.icon;
-              const isActive = activeFilter === filter.label;
+              const isActive = activeFilter === filter.value;
 
               return (
                 <button
-                  key={filter.label}
+                  key={filter.value}
                   type="button"
                   aria-pressed={isActive}
-                  onClick={() => setActiveFilter(filter.label)}
+                  onClick={() => setActiveFilter(filter.value)}
                   className={`relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs transition-all duration-300 sm:px-5 sm:text-sm ${
                     isActive
                       ? "text-white"
@@ -278,7 +300,7 @@ export function Works() {
 
                   <Icon className="relative z-10 h-4 w-4" />
 
-                  <span className="relative z-10">{filter.label}</span>
+                  <span className="relative z-10">{copy(filter.label)}</span>
                 </button>
               );
             })}
@@ -316,6 +338,7 @@ function ProjectCard({
   isDark: boolean;
 }) {
   const isExternalLink = project.href?.startsWith("http") ?? false;
+  const { copy } = useLanguage();
 
   const sharedMotionProps = {
     layout: true,
@@ -376,11 +399,11 @@ function ProjectCard({
         />
 
         <div className="absolute left-5 top-5 rounded-full border border-white/[0.16] bg-black/45 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/75 backdrop-blur-md">
-          {project.category}
+          {copy({ en: project.category, id: "Produk Digital" })}
         </div>
 
         <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-          <p className="text-xs text-white/70">{project.type}</p>
+          <p className="text-xs text-white/70">{copy(project.type)}</p>
 
           <span
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.15] bg-black/50 backdrop-blur-md transition-all duration-300 ${
@@ -426,7 +449,7 @@ function ProjectCard({
           </div>
 
           <p className="mt-4 min-h-[72px] text-sm leading-6 text-muted transition-colors duration-300 group-hover:text-text-secondary">
-            {project.description}
+            {copy(project.description)}
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2 border-t border-stroke pt-5">
@@ -451,7 +474,7 @@ function ProjectCard({
         href={project.href}
         target={isExternalLink ? "_blank" : undefined}
         rel={isExternalLink ? "noopener noreferrer" : undefined}
-        aria-label={`Open ${project.title} case study`}
+        aria-label={copy({ en: `Open ${project.title} case study`, id: `Buka studi kasus ${project.title}` })}
         className={cardClassName}
       >
         {content}
